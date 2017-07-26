@@ -1,0 +1,160 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+  
+  <!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Welcome <%= user.get("fullName") %>
+      <small> 
+      </small>
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+     <!-- Info boxes -->
+      <div class="row">
+
+      <!-- col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-blue" style="padding: 10px">
+              <span class="info-box-text" style="padding: 0px;margin: 0px;">Change Application</span>
+              <form method="post" action="select_app_home" style="margin-top: 5px">
+                      <select onchange="this.form.submit()" id="app" name="app" class="form-control select2" style="width: 100%;">
+                          <% for (var i = 0; i < apps.length; i++) { 
+                            var appObj = JSON.stringify(apps[i])
+                            var appName = apps[i].get("name")
+                            if ( apps[i].id===app.objectId) { -%>
+                              <option selected="selected" value='<%= appObj %>' ><%= appName %></option>
+                            <% } else { -%>
+                              <option value='<%= appObj %>' ><%= appName %></option>
+                            <% } 
+                          } -%>
+                      </select>
+              </form>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <a href="add_post_editor" style="color: inherit;">
+              <span class="info-box-icon bg-aqua"><i class="fa fa-pencil-square-o"></i></span>
+
+              <div class="info-box-content">
+              	<span class="info-box-number" style="margin-top: 15px">Add Post</span>
+                <span class="info-box-text"><%= statistics.totalPostEditor %> posted</small></span>
+              </div>
+            </a>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        
+        
+
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="post_list_editor_rejected" style="color: inherit;">
+            <span class="info-box-icon bg-red"><i class="fa fa-flag-checkered"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-number" style="margin-top: 5px">Rejected</span>
+              <span class="info-box-text"><%= statistics.rejectedPostEditor %></span>
+              <% 
+                if (statistics.rejectedPostEditor > 0) { -%>
+                  <span class="info-box-text" style="color: #dd4b39;font-weight: bold;">Resubmit Now</span>
+                <%}else{-%>
+                  <span class="info-box-text" style="color: #00a65a;font-weight: bold;">All Good</span>
+                <%}
+              -%>
+              
+            </div>
+            <!-- /.info-box-content -->
+            </a>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="post_list_editor_pending" style="color: inherit;">
+            <span class="info-box-icon bg-yellow"><i class="fa fa-pencil-square"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-number" style="margin-top: 15px">Pending</span>
+              <span class="info-box-text"><%= statistics.pendingPostEditor %></span>
+            </div>
+            <!-- /.info-box-content -->
+            </a>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="post_list_editor_approved" style="color: inherit;">
+            <span class="info-box-icon bg-green"><i class="fa fa-check-circle"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-number" style="margin-top: 15px">Approved</span>
+              <span class="info-box-text"><%= statistics.approvedPostEditor %></span>
+            </div>
+            <!-- /.info-box-content -->
+            </a>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+      </div>
+      <!-- /.row -->
+
+  </section>
+  <!-- /.content -->
+  <!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+</div>
+<!-- /.content-wrapper -->
+
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+<script>
+  function restart(){
+      var url = 'restart'
+      $('#loadingModal').modal('show');
+      $.get( url)
+        .done(function( results ) {
+          var timer = setInterval(function() { 
+              $('#loadingModal').modal('hide');
+              clearInterval(timer);
+          }, 1000);
+        }).fail(function(xhr, status, error){
+            var timer = setInterval(function() { 
+              $('#loadingModal').modal('hide');
+              clearInterval(timer);
+          }, 1000);
+            // alert(xhr.responseText)
+        });
+    }
+  $(function () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+</script>

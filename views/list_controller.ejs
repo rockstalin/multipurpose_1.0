@@ -1,0 +1,199 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+<div class="content-wrapper">
+  <section class="content">
+    <div class="row" id="divResults">
+    </div>
+    <h4 id="error" style="color:red;padding:20px"></h4>
+  </section>
+  <div id="wait" style="width: 100%;text-align: center;padding-bottom:20px">
+      <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+  </div>
+</div>
+<!-- /.content-wrapper -->
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+
+<script>
+function decodeObject (obj) {for (var key in obj) {if (obj.hasOwnProperty(key)) {if(typeof obj[key] == 'object'){if(obj[key] instanceof Array){for(var j=0;j<obj[key].length;j++){if(typeof obj[key][j]=='object') {obj[key][j] = decodeObject(obj[key][j])}else{obj[key][j]=  decodeURIComponent(decodeURIComponent(obj[key][j]))}}}else{obj[key] = decodeObject(obj[key]);}}else {obj[key] = decodeURIComponent(decodeURIComponent(obj[key]))}}}return obj;}
+    function objectToString (obj) {
+        var str = '{';
+        for (var key in obj) {
+            if(key === "__type" || key === "className")
+              continue;
+            if (obj.hasOwnProperty(key)) {
+                if(typeof obj[key] == 'object')
+                {
+                    if(obj[key] instanceof Array)
+                    {
+                        str+= '"'+key +'"'+ ' : [ ';
+                        for(var j=0;j<obj[key].length;j++)
+                        {
+                            if(typeof obj[key][j]=='object') {
+                                str += '{' + objectToString(obj[key][j]) + ',' + '}';
+                            }
+                            else
+                            {
+                                str += '\"' + encodeURIComponent(obj[key][j]) + '\"' + ','; 
+                            }
+                        }
+                        if (str.charAt(str.length - 1) == ',') {
+                          str = str.substr(0, str.length - 1);
+                        }
+                        str+= ']' + ','
+                    }
+                    else
+                    { 
+                        str += '"'+key + '"'+ ' :  ' + objectToString(obj[key]) + ' ' + ',';
+                    }
+                }
+                else {
+                    str +='"'+key +'"'+ ':\"' + encodeURIComponent(obj[key]) + '\"' + ',';
+                }
+            }
+        }
+        if (str.charAt(str.length - 1) == ',') {
+          str = str.substr(0, str.length - 1);
+        }
+        str += "}"
+        return str;
+    }
+  var cell = '<%= cell %>'
+  var url = '<%= url %>'
+  var params = <%- JSON.stringify(params) %>
+  var isPaging = <%= isPaging %>
+  var publishedAt = undefined;
+  var createdAt = undefined;
+  var isLoadedAll = false;
+  var isLoading = false;
+  $(document).ready(function () { 
+   $(document).ajaxStart(function () {
+          $('#wait').show();
+      });
+      $(document).ajaxStop(function () {
+          $('#wait').hide();
+      });
+      $(document).ajaxError(function () {
+          $('#wait').hide();
+      });   
+  });
+  var cell = '<%= cell %>'
+  var url = '<%= url %>'
+  var params = <%- JSON.stringify(params) %>
+  var isPaging = <%= isPaging %>
+  var publishedAt = undefined;
+  var createdAt = undefined;
+  var isLoadedAll = false;
+  $(document).ready(function () { 
+   $(document).ajaxStart(function () {
+          $('#wait').show();
+      });
+      $(document).ajaxStop(function () {
+          $('#wait').hide();
+      });
+      $(document).ajaxError(function () {
+          $('#wait').hide();
+      });   
+  });
+  function getData() {
+    if(isLoadedAll || isLoading){
+      return
+    }
+    isLoading = true
+    params.publishedAt = publishedAt
+    params.createdAt = createdAt
+    console.log(params)
+    $.get(cell, function (template) {
+        var func = ejs.compile(template);
+        $.post( url, params)
+          .done(function( results ) {
+            for (var i = 0; i < results.length; i++) {
+              var obj = results[i]
+              if(obj.fromUser && obj.fromUser.createdAt)
+                obj.fromUser.createdAgo = timeSince(obj.fromUser.createdAt)
+              if(obj.user && obj.user.createdAt)
+                obj.user.createdAgo = timeSince(obj.user.createdAt)
+              obj.createdAgo = timeSince(obj.createdAt)
+              obj.updatedAgo = timeSince(obj.updatedAt)
+              if(obj.publishedAt)
+                obj.publishedAgo = timeSince(obj.publishedAt.iso)
+            }
+            if(isPaging === true){
+              if(results.length>0){
+                var object = results[results.length-1]
+                if(object.publishedAt)
+                  publishedAt = object.publishedAt.iso
+                else
+                  createdAt = object.createdAt
+              }
+              if(results.length === 0 && (publishedAt || createdAt)){
+                isLoadedAll = true
+              }
+            }
+            var html = func({results:results,sessionObjectId: "<%= sessionObjectId %>" });
+            $('#divResults').append(html);
+            $('#error').innerHtml = ""
+            isLoading = false
+          }).fail(function(xhr, status, error){
+            document.getElementById('error').innerHTML = xhr.responseText
+            isLoading = false
+          });
+    });
+  }
+  $(window).scroll(function() {
+      if($(window).scrollTop() == $(document).height() - $(window).height()) {
+        var end = $("#divResults").offset().top; 
+        var viewEnd = $(window).scrollTop() + $(window).height(); 
+        var distance = end - viewEnd; 
+        if (distance < 300){
+          if(isPaging === true){
+            getData()
+          }
+        }
+      }
+  });
+    $(function () {
+      getData()
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+        // prevent virtual keyboard 
+      }else{
+        $(".select2").select2();
+      }
+    });
+  function timeSince(date) {
+    date = new Date(date)
+    var seconds = Math.floor((new Date() - date) / 1000);
+    
+    if(seconds < 0){
+      // handle future date
+      return "after "+secondToAgo(Math.abs(seconds))
+    }else{
+      return secondToAgo(seconds)+" ago"
+    }
+  }
+  function secondToAgo(seconds){
+    var interval = Math.floor(seconds / 31536000);
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+  }
+</script>

@@ -1,0 +1,149 @@
+<% results.forEach(function (item) { 
+  var image = undefined
+  console.log(item.takenBy)
+  if(item.takenBy && item.takenBy.profilePicture && item.takenBy.profilePicture.url)
+    image = item.takenBy.profilePicture.url
+  var str = "{'tar':\""+item.tar+"\",'objectId':'"+item.objectId+"'}"
+  %>
+   <!-- /.col -->
+       <div class="col-md-4" id="rootDiv_<%=item.objectId%>">
+         <div class="info-box" style="height: 95px">
+            <span class="info-box-icon" style="padding:4px 10px;background:#dedede;height: inherit;">
+              <% if (image) { -%>
+                <img src="<%= image %>" class="img-circle" style="margin-top:-8px">  
+              <% } else { -%>
+                <i class="fa fa-image"></i>  
+              <% } -%>
+            </span>
+            <div class="info-box-content" style="padding-top:0px">
+                <% if (item.takenBy) { -%>
+                    <span class="info-box-number"><%= item.takenBy.fullName %></span>
+                <% }else if (item.isAutomatic) { -%> 
+                    <span class="info-box-number">System (Automatic)</span>
+                <% } else { -%>
+                    <span class="info-box-number">Unknown</span>  
+                <% } -%>
+                <span class="users-list-date" style="min-width: 80px">taken : <strong><%= item.createdAgo %></strong></span>
+                <span class="users-list-date" style="margin-bottom: 3px;margin-top:3px;white-space: nowrap;width: inherit;overflow: hidden">
+                    <pre style="margin:0px;padding: 0px 5px"><%= item.tar %></pre>
+                </span>
+                <strong><button class="btn btn-primary btn-sm" onclick="window.open('../db_backups/'+'<%= item.tar %>')" style="padding:0px 5px;">Download</button></strong>
+                <strong><button class="btn btn-warning btn-sm" type="button" style="padding:0px 5px;" data-toggle="modal" data-whatever="<%= str %>" data-target="#deleteCategory1">Restore</button></strong>
+                <strong><button class="btn btn-danger btn-sm" type="button" style="padding:0px 5px;" data-toggle="modal" data-whatever="<%= str %>" data-target="#deleteCategory">Delete</button></strong>
+            </div>
+          <!-- /.info-box-content -->
+         </div>
+         <!-- /.info-box -->
+       </div>
+  <!-- /.col -->
+  
+<% }); %> 
+
+<!-- Small modal -->
+<div class="modal fade" style = "padding-top:15%" id="deleteCategory" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-footer">
+          <label hidden="true" id="lblCategoryId"></label>
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="deleteCategory()" id="btnSend">Delete</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+<!-- Small modal -->
+<div class="modal fade" style = "padding-top:15%" id="deleteCategory1" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title1" style="color: #ff0000">Warning: Restoring will clear all new data !!</h5>
+        </div>
+        <div class="modal-footer">
+          <label hidden="true" id="lblCategoryId1"></label>
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" onclick="restoreDatabase()" >Proceed</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- Small modal -->
+  <div class="modal fade" style = "padding-top:15%" id="successModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" style="text-align: center;">Done</h4>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+<script>
+  
+  function restoreDatabase(){
+
+      var categoryId = (document.getElementById('lblCategoryId1').innerHTML).trim();
+      var url = 'loadData?functionName=restoreBackup'
+      var params = {'databaseTar':categoryId}
+
+      $('#loadingModal').modal('show');
+      $('#deleteCategory1').modal('hide');
+      $.post( url, params)
+          .done(function( results ) {
+              $('#successModal').modal('show');
+              $('#loadingModal').modal('hide');
+              var timer = setInterval(function() { 
+                  $('#successModal').modal('hide');
+                  clearInterval(timer);
+                  window.location.href = 'database'
+              }, 1000);
+            }).fail(function(xhr, status, error){
+                $('#loadingModal').modal('hide');
+                alert(xhr.responseText)
+            });
+    }
+  function deleteCategory(){
+      var categoryId = (document.getElementById('lblCategoryId').innerHTML).trim();
+      var url = 'loadData?functionName=deleteBackup'
+      var params = {'objectId':categoryId}
+      $('#loadingModal').modal('show');
+      $.post( url, params)
+        .done(function( results ) {
+            $('#deleteCategory').modal('hide');
+            $('#loadingModal').modal('hide');
+            var elem = document.getElementById('rootDiv_'+categoryId);
+            elem.parentNode.removeChild(elem);            
+        }).fail(function(xhr, status, error){
+            $('#loadingModal').modal('hide');
+            alert(xhr.responseText)
+        });
+    }
+  $('#deleteCategory').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    data = eval('(' + data + ')')
+    var modal = $(this)
+    modal.find('.modal-title').text('Delete ' + data.tar+' ?')
+    document.getElementById('lblCategoryId').innerHTML = data.objectId
+  })
+  $('#deleteCategory1').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    data = eval('(' + data + ')')
+    var modal = $(this)
+    document.getElementById('lblCategoryId1').innerHTML = data.tar
+  })
+</script>

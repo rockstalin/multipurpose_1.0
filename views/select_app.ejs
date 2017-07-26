@@ -1,0 +1,55 @@
+<% include ./common/head %>
+</head>
+<body class="hold-transition login-page">
+
+<div class="login-box">
+  <div class="login-logo">
+      <b><%= devNameBold %></b><%= devNameThin %>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body" style="padding-left:30px;padding-right:30px">
+  <p class="login-box-msg" >Please Select the app to manage</p>
+  
+    <form class="form-horizontal" method="post" action="select_app">
+        <div class="form-group has-feedback">
+          <select id="app" name="app" class="form-control select2" style="width: 100%;">
+          
+          <% for (var i = 0; i < results.length; i++) { 
+              var app = JSON.stringify(results[i])
+            -%>
+            <% if (i===0) { -%>
+              <option selected="selected" value='<%= app %>' ><%= results[i].get("name") %></option>
+            <% } else { -%>
+              <option value='<%= app %>' ><%= results[i].get("name") %></option>
+            <% } -%>
+            
+          <% } -%>
+          </select>
+        </div>
+        <div class="row">
+        <!-- /.col -->
+        <div class="center-block">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Continue</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+  
+
+<!-- REQUIRED JS SCRIPTS -->
+<% include ./common/footer_js %>
+<script>
+
+
+  $(function () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+</script>

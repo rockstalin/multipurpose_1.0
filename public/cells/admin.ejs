@@ -1,0 +1,356 @@
+<% results.forEach(function (item) {
+    var image = undefined
+    if(item.profilePicture && item.profilePicture.url)
+      image = item.profilePicture.url 
+    var str = "{'name':\""+item.fullName+"\",'objectId':'"+item.objectId+"','username':'"+item.username+"','phone':'"+item.phone+"','url':'"+image+"'}"
+    var disableForMe = false
+    if(item.objectId === sessionObjectId)
+      disableForMe = true
+  %>
+
+    <div class="col-md-4" id="rootDiv_<%=item.objectId %>">
+          <div class="info-box" style="padding:0px; float: left;background:#fff" id = "divItem_<%-item.objectId%>">
+
+                  <span class="info-box-icon" style="padding:0px 5px;">
+                        <% if (image) { -%>
+                          <img  data-toggle="modal" data-whatever="<%= image %>" data-target="#imageModal" src="<%= image %>" class="img-circle" style="margin-top: -10px">  
+                        <% } else { -%>
+                          <i class="fa fa-image"></i>
+                        <% } -%>
+                  </span>
+                  <div class="info-box-content" style="padding-top:0px;height:90px">
+                      <span class="info-box-number"><%= item.fullName %></span>
+                      <div style="font-size: 14px;color:#999">
+                              <%=item.username %></br>
+                      </div>
+                      <div style="font-size: 10px;color:#999">
+                              joined  <%=item.createdAgo %></br>
+                      </div>
+                      <div style="margin-top: 3px;margin-bottom: 5px">
+                            <a onclick="editAction(<%= str %>)" class="btn btn-primary" style="padding: 0px 5px">Edit</a>
+                            <a data-toggle="modal" data-whatever="<%= str %>" data-target="#changePassword" class="btn btn-warning" style="padding: 0px 5px">Password</a>
+                            <% if (disableForMe) { -%>
+                                  <button  type="button" class="btn btn-danger" data-toggle="modal" data-whatever="<%= str %>" data-target="#deleteAction" disabled="" style="padding: 0px 5px">Delete</button>  
+                            <% } else { -%>
+                                  <button type="button" class="btn btn-danger" data-toggle="modal" data-whatever="<%= str %>" data-target="#deleteAction" style="padding: 0px 5px">Delete</button>
+                            <% } -%>
+                        </div>
+                  </div>
+                  <div style="text-align: center;font-size: 14px;padding-top: 7px;padding-bottom: 5px;background: #222d32 ;color:#fff">
+                        <% if (disableForMe) { -%>
+                            <input disabled="true" type="checkbox" checked="checked">
+                            <label style="color: inherit;"><strong> Super Admin</strong></label>
+                            <input disabled="true" type="checkbox" checked="checked">
+                            <label style="color: inherit;"><strong> Admin</strong></label>
+                            <input disabled="true" type="checkbox" checked="checked">
+                            <label style="color: inherit;"><strong> Editor</strong></label>
+                        <% } else { -%>
+                              <% if (item.superAdminAccess) { -%>
+                                      <input type="checkbox" checked="checked" onchange="onSuperAdminChange('<%= item.objectId %>')" id="cbSuperAdmin<%= item.objectId %>">
+                                      <label><strong> Super Admin</strong></label>
+
+                                      <input disabled="true" type="checkbox" checked="checked" onchange="onAdminChange('<%= item.objectId %>')" id="cbAdmin<%= item.objectId %>">
+                                      <label style="color: inherit;" id="lblAdmin<%= item.objectId %>" ><strong>Admin</strong></label>
+
+                                      <input disabled="true" type="checkbox" checked="checked" onchange="onEditorChange('<%= item.objectId %>')" id="cbEditor<%= item.objectId %>">
+                                      <label style="color: inherit;" id="lblEditor<%= item.objectId %>" ><strong>Editor</strong></label>
+
+                              <% } else if (item.adminAccess) { -%>
+                                      <input type="checkbox" onchange="onSuperAdminChange('<%= item.objectId %>')" id="cbSuperAdmin<%= item.objectId %>">
+                                      <label><strong> Super Admin</strong></label>
+
+                                      <input type="checkbox" checked="checked" onchange="onAdminChange('<%= item.objectId %>')" id="cbAdmin<%= item.objectId %>">
+                                      <label id="lblAdmin<%= item.objectId %>" ><strong>Admin</strong></label>
+
+                                      <input disabled="true" type="checkbox" checked="checked" onchange="onEditorChange('<%= item.objectId %>')" id="cbEditor<%= item.objectId %>">
+                                      <label style="color: inherit;" id="lblEditor<%= item.objectId %>" ><strong>Editor</strong></label>
+
+                              <% } else { -%>
+                                      <input type="checkbox" onchange="onSuperAdminChange('<%= item.objectId %>')" id="cbSuperAdmin<%= item.objectId %>">
+                                      <label><strong> Super Admin</strong></label>
+
+                                      <input type="checkbox" onchange="onAdminChange('<%= item.objectId %>')" id="cbAdmin<%= item.objectId %>">
+                                      <label id="lblAdmin<%= item.objectId %>" ><strong>Admin</strong></label>
+                                      <%  if (item.editorAccess) { -%>
+                                          <input checked="true" type="checkbox" onchange="onEditorChange('<%= item.objectId %>')" id="cbEditor<%= item.objectId %>">
+                                       <% }else {-%>   
+                                          <input type="checkbox" onchange="onEditorChange('<%= item.objectId %>')" id="cbEditor<%= item.objectId %>">
+                                       <% } -%>   
+                                      <label id="lblEditor<%= item.objectId %>" ><strong>Editor</strong></label>
+                              <% } -%>
+                              
+                        <% } -%>
+                        <% if (item.ads) { -%>
+                              <input type="checkbox" checked="checked" onchange="onAdsChange('<%= item.objectId %>')" id="cbAds<%= item.objectId %>">
+                        <% } else { -%>
+                                <input type="checkbox" onchange="onAdsChange('<%= item.objectId %>')" id="cbAds<%= item.objectId %>">
+                        <% } -%>
+                        <strong> Ads</strong>
+                        
+                    </div>
+          </div>
+    </div>
+  
+<% }); %>
+
+<!-- Dialogs -->
+
+<div class="modal fade" style = "padding-top:10%" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Change Password </h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <input type="password" class="form-control" id="recipient-name" placeholder="Enter new password">
+            <label hidden="true" id="lblUserId"></label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="checkFormData()" id="btnSend">Change</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!-- Small modal -->
+<div class="modal fade" style = "padding-top:15%" id="sentSMS" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Password Changed</h4>
+        </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- Confirmaion -->
+<div class="modal fade" style = "padding-top:15%" id="deleteAction" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-footer">
+          <label hidden="true" id="lblObjectId"></label>
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="deleteAction()" id="btnSend">Delete</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+<div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="padding-top: 10px">
+    <div class="modal-content" style="padding: 5px;border-radius: 5px;width: 100%;margin: 0 auto;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <img id="imageModalImg" src="" class="img-responsive">
+    </div>
+  </div>
+</div>
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+<script type="text/javascript">
+
+  var superAdminId = "<%= sessionObjectId %>"
+
+   function checkFormData(){
+      var p = document.getElementById('error')
+      var password = (document.getElementById('recipient-name').value).trim();
+      if(!password){
+          p.innerHTML = "Please enter password"
+          return false;
+      }
+      p.innerHTML = ""
+      var userId = (document.getElementById('lblUserId').innerHTML).trim();
+      var btn = document.getElementById("btnSend")
+      btn.disabled = true
+      btn.innerHTML = "Loading..."
+
+      var url = 'loadData?functionName=changeAdminPassword'
+      var params = {}
+      params.superAdminId = superAdminId
+      params.password = password
+      params.objectId = userId
+      
+      $.post( url, params)
+        .done(function( results ) {
+          btn.disabled = false
+          btn.innerHTML = "Change"
+          $('#changePassword').modal('hide');
+          $('#sentSMS').modal('show');
+          var timer = setInterval(function() { 
+              $('#sentSMS').modal('hide');
+              clearInterval(timer);
+          }, 1000);
+        }).fail(function(xhr, status, error){
+            alert(xhr.responseText)
+        });
+    }
+  
+  function onSuperAdminChange(objectId){
+    if(document.getElementById('cbSuperAdmin'+objectId).checked) {
+      
+      document.getElementById('cbAdmin'+objectId).disabled = true
+      document.getElementById('cbAdmin'+objectId).checked = true
+      document.getElementById('lblAdmin'+objectId).style.color = "#eee"
+
+      document.getElementById('cbEditor'+objectId).disabled = true
+      document.getElementById('cbEditor'+objectId).checked = true
+      document.getElementById('lblEditor'+objectId).style.color = "#eee"
+
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.superAdminAccess = true
+      params.adminAccess = true
+      params.editorAccess = true
+      updateAdmin(params)
+    }
+    else{
+      document.getElementById('cbAdmin'+objectId).disabled = false
+      document.getElementById('lblAdmin'+objectId).style.color = "inherit"
+
+      document.getElementById('cbEditor'+objectId).disabled = false
+      document.getElementById('lblEditor'+objectId).style.color = "inherit"
+
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.superAdminAccess = false
+      updateAdmin(params)
+    }
+  }
+  function onAdminChange(objectId){
+    if(document.getElementById('cbAdmin'+objectId).checked) {
+      document.getElementById('cbEditor'+objectId).disabled = true
+      document.getElementById('cbEditor'+objectId).checked = true
+      document.getElementById('lblEditor'+objectId).style.color = "#eee"
+
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.adminAccess = true
+      params.editorAccess = true
+      updateAdmin(params)
+    }
+    else{
+      document.getElementById('cbEditor'+objectId).disabled = false
+      document.getElementById('lblEditor'+objectId).style.color = "inherit"
+
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.adminAccess = false
+      updateAdmin(params)
+    }
+  }
+  function onEditorChange(objectId){
+    if(document.getElementById('cbEditor'+objectId).checked) {
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.editorAccess = true
+      updateAdmin(params) 
+    }
+    else{
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.editorAccess = false
+      updateAdmin(params)
+    }
+  }
+  function onAdsChange(objectId){
+    if(document.getElementById('cbAds'+objectId).checked) {
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.ads = true
+      updateAdmin(params)
+    }
+    else{
+      var params = {'superAdminId':superAdminId,'objectId':objectId}
+      params.ads = false
+      updateAdmin(params)
+    }
+  }
+
+   // jquery extend function
+$.extend(
+{
+    redirectPost: function(location, args)
+    {
+        var form = $('<form></form>');
+        form.attr("method", "post");
+        form.attr("action", location);
+
+        $.each( args, function( key, value ) {
+            var field = $('<input></input>');
+            field.attr("type", "hidden");
+            field.attr("name", key);
+            field.attr("value", value);
+            form.append(field);
+        });
+        $(form).appendTo('body').submit();
+    }
+}); 
+  function editAction(params){
+      $.redirectPost("edit_admin", params);
+    }
+  function updateAdmin(params){
+      var url = 'loadData?functionName=updateAdmin'
+      $('#loadingModal').modal('show');
+      $.post( url, params)
+      .done(function( results ) {
+        console.log(results)
+        $('#loadingModal').modal('hide');
+      }).fail(function(xhr, status, error){
+          $('#loadingModal').modal('hide');
+          alert(xhr.responseText)
+      });
+  }
+  function deleteAction(){
+      var objectId = (document.getElementById('lblObjectId').innerHTML).trim();
+      var url = 'loadData?functionName=deleteAdmin'
+      var params = {'objectId':objectId}
+      $('#loadingModal').modal('show');
+      $.post( url, params)
+          .done(function( results ) {
+            $('#deleteAction').modal('hide');
+            $('#loadingModal').modal('hide');
+            var elem = document.getElementById('rootDiv_'+objectId);
+            elem.parentNode.removeChild(elem);            
+          }).fail(function(xhr, status, error){
+              $('#loadingModal').modal('hide');
+              alert(xhr.responseText)
+          });
+    }
+
+  $('#imageModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    var modal = $(this)
+    console.log(data)
+    var output = document.getElementById('imageModalImg');
+    output.src = data
+  })
+  $('#deleteAction').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    data = eval('(' + data + ')')
+    var modal = $(this)
+    modal.find('.modal-title').text('Delete ' + data.name+' ?')
+    document.getElementById('lblObjectId').innerHTML = data.objectId
+  })
+  $('#changePassword').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var data = button.data('whatever') 
+    var userData = eval('(' + data + ')')
+    var modal = $(this)
+    modal.find('.modal-title').text('Change password of ' + userData.name)
+    document.getElementById('lblUserId').innerHTML = userData.objectId
+    var p = document.getElementById('error')
+    p.innerHTML = ""
+  })
+</script>

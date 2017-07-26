@@ -1,0 +1,173 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+<div class="content-wrapper">
+  <section class="content">
+         <div class="col-md-4">
+          <!-- general form elements -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Update Admin</h3>
+            </div>
+              <div class="box-body">
+
+                <div class="info-box-icon col-sm-4">
+                  <% if (object.url && !(object.url === 'undefined')) { -%>
+                    <img src="<%= object.url %>" class="img-rounded" id="image" style="margin-top:-12px">
+                  <% } else { -%>
+                    <i class="fa fa-image" id="placeholderImage"></i> 
+                    <img src="" class="img-circle" id="image" style="margin-top:-12px">
+                  <% } -%>
+                </div>
+                <input class="col-sm-8" onchange="loadFile(event)" style="padding-top:25px" id="file-input" type="file" accept="image/*"/>
+                <div class="form-group" style="margin-top: 100px">
+                  <input type="text" placeholder="Name" id="name" value="<%= object.name %>" class="form-control">
+                </div>
+                <div class="form-group">
+                  <input type="text" placeholder="username" id="username" value="<%= object.username %>" class="form-control">
+                </div>
+                <div class="form-group">
+                  <% if (object.phone && !(object.phone === "undefined")) { -%>
+                      <input type="text" placeholder="Phone number with country code (optional)" id="phone" value="<%= object.phone %>" class="form-control">
+                  <% } else { -%>
+                      <input type="text" placeholder="Phone number with country code (optional)" id="phone" class="form-control">
+                  <% } -%>
+                  
+                </div>
+                <label style="color:red;" id="error"></label>
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button class="btn btn-primary btn-lg btn-block" onclick="updateAction()" >Update</button>
+              </div>
+          </div>
+          <!-- /.box -->
+        </div>
+  </section>
+
+  <!-- Confirmaion -->
+  <div class="modal fade" style = "padding-top:15%" id="confirmaionModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Image should be 400x400 !</h4>
+          </div>
+          <div class="modal-footer">
+            <label hidden="true" id="lblCategoryId"></label>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="uploadImage()" id="btnSend">Continue</button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Small modal -->
+  <div class="modal fade" style = "padding-top:15%" id="successModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Admin Updated</h4>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<!-- /.content-wrapper -->
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+
+<script>
+  var appId = "<%= app.objectId %>"
+  var sessionObjectId = "<%= sessionObjectId %>"
+  var objectOld = <%- JSON.stringify(object) %>
+  var name,username,phone;
+  var file = undefined;
+  var width = 0;
+  var height = 0;
+  var loadFile = function(event) {
+    file = event.target.files[0]
+    var output = document.getElementById('image');
+    output.src = URL.createObjectURL(file);
+    var img;
+    img = new Image();
+    img.onload = function () {
+      width = this.width;
+      height  = this.height
+    };
+    img.src = URL.createObjectURL(file);
+  };
+  
+  function updateAction(){
+    var p = document.getElementById('error')
+    name = (document.getElementById('name').value).trim();
+    username = (document.getElementById('username').value).trim();
+    phone = (document.getElementById('phone').value).trim();
+    if(!name){
+        p.innerHTML = "Please enter name"
+        return false;
+    }else if(!username){
+        p.innerHTML = "Please enter username"
+        return false;
+    }
+    p.innerHTML = ""
+
+    if(file && width === 400 && height === 400){
+      uploadImage()
+    }else if(file){
+      $('#confirmaionModal').modal('show');
+    }else{
+      finalUpdateAction()
+    }
+  }
+  function uploadImage(){
+    if(file){
+      var url = "upload"+"/admin.jpg"
+      $.ajax({
+         url: url,
+         type: "POST",
+         data: file,
+         processData: false,
+         contentType: "admin/file",
+        }).done(function( data ) {
+            finalUpdateAction(data.name)
+        }).fail(function(xhr, status, error){
+            alert(xhr.responseText)
+        }); 
+      }else{
+        finalUpdateAction(undefined)
+      }
+  }
+  function finalUpdateAction(fileName){
+    var url = 'loadData?functionName=updateAdmin'
+    var params = {'objectId':objectOld.objectId,'superAdminId':sessionObjectId,'username':username,'fullName':name}
+    if(fileName){
+      params.fileName= fileName
+    }
+    if(phone)
+      params.phone= phone
+    else if(objectOld.phone)
+      params.phone = null
+    $.post( url, params)
+    .done(function( results ) {
+      console.log(results)
+      $('#successModal').modal('show');
+      $('#confirmaionModal').modal('hide');
+      var timer = setInterval(function() { 
+          $('#successModal').modal('hide');
+          clearInterval(timer);
+          window.location.href = 'admin_list'
+      }, 1000);
+    }).fail(function(xhr, status, error){
+        alert(xhr.responseText)
+    });
+  }
+  $(function () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+</script>

@@ -1,0 +1,249 @@
+<% results.forEach(function (item) {
+  var image = undefined,imageFull
+  if(item.profilePicture && item.profilePicture.url){
+    image = item.profilePicture.url
+    imageFull = image
+  }
+  if(item.profilePictureFull && item.profilePictureFull.url)
+    imageFull = item.profilePictureFull.url 
+  var phone = undefined
+  if(item.phone && item.countryCode)
+    phone = item.phone
+  var str = "{'name':'"+item.fullName +"','phone':" +"'"+phone+"','countryCode':'"+item.countryCode+"','userId':'"+item.objectId+"'}"
+  %>
+   <!-- /.col -->
+   
+       <div class="col-md-4">
+         <div class="info-box">
+            <span class="info-box-icon" style="padding:4px 10px;background:#dedede">
+              <% if (image) { -%>
+                <img src="<%= image %>" class="img-circle" style="margin-top:-20px" data-toggle="modal" data-whatever="<%= imageFull %>" data-target="#imageModal" >
+              <% } else { -%>
+                <i class="fa fa-image"></i>  
+              <% } -%>
+            </span>
+            <div class="info-box-content" style="padding-top:11px">
+              <% if (item.facebookId) { -%>
+                <a href="http://fb.com/<%= item.facebookId %>" target="new">
+              <% } else { -%>
+                <a href="#">  
+              <% } -%>
+              
+              <span class="info-box-number"><%= item.fullName %></span></a>
+              <div style="float:left">
+                  <span class="users-list-date" style="padding-top:3px">Joined <%= item.createdAgo %></span>
+                  <span class="users-list-date" style="margin-top:3px">From <%= item.timeZone %></span>
+              </div>
+              <div style="float:right">
+                <button class="btn btn-block btn-primary btn-sm" type="button" style="padding:0px 5px;" data-toggle="modal" data-whatever="<%= str %>" data-target="#sendPush">Send Push</button>
+                <% if (phone) { -%>
+                  <strong><button class="btn btn-block btn-primary btn-sm" type="button" style="padding:0px 5px;margin-top:2px" data-toggle="modal" data-whatever="<%= str %>" data-target="#sendSMS">Send SMS</button></strong>  
+                <% } -%>
+              </div>
+            </div>
+          <!-- /.info-box-content -->
+         </div>
+         <!-- /.info-box -->
+       </div>
+   
+  <!-- /.col -->
+  
+<% }); %> 
+
+<!-- Dialogs -->
+
+<div class="modal fade" style = "padding-top:10%" id="sendSMS" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Send SMS to </h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="control-label">Message:</label>
+            <textarea class="form-control" id="message-text" placeholder="Type the message.."></textarea>
+            <label style="color:red" id="error"></label>
+            <label hidden="true" id="lblCountryCode"></label>
+            <label hidden="true" id="lblUserId"></label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="checkFormData()" id="btnSend">Send</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="padding-top: 5%">
+    <div class="modal-content" style="padding: 5px;border-radius: 5px;width: 50%;margin: 0 auto;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <img id="imageModalImg" src="" class="img-responsive">
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" style = "padding-top:10%" id="sendPush" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Send Push to </h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="message-text-push" class="control-label">Message:</label>
+            <textarea class="form-control" id="message-text-push" placeholder="Type the message.."></textarea>
+            <label style="color:red" id="error_push"></label>
+            <label hidden="true" id="lblPushUserId"></label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="checkFormDataPush()" >Send</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!-- Small modal -->
+<div class="modal fade" style = "padding-top:15%" id="sentSMS" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal-dialog modal-sm" role="document">
+  <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">SMS Sent</h4>
+      </div>
+    </div>
+</div>
+</div>
+<!-- Small modal -->
+<div class="modal fade" style = "padding-top:15%" id="done" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Done !!</h4>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loading" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+<script>
+  function checkFormData(){
+      var p = document.getElementById('error')
+      var username = (document.getElementById('recipient-name').value).trim();
+      if(!username){
+          p.innerHTML = "Please enter phone number"
+          return false;
+      }
+      var password = (document.getElementById('message-text').value).trim();
+      if(!password){
+          p.innerHTML = "Please enter message"
+          return false;
+      }
+      p.innerHTML = ""
+      var cc = (document.getElementById('lblCountryCode').innerHTML).trim();
+      var userId = (document.getElementById('lblUserId').innerHTML).trim();
+      var url = 'loadData?functionName=sendSMS'
+      var params = {}
+      params.phone = username
+      params.countryCode = cc
+      params.text = password
+      params.userId = userId
+      $('#loading').modal('show');
+      $.post( url, params)
+        .done(function( results ) {
+          $('#loading').modal('hide');
+          $('#sendSMS').modal('hide');
+          $('#sentSMS').modal('show');
+          var timer = setInterval(function() { 
+              $('#sentSMS').modal('hide');
+              clearInterval(timer);
+          }, 1000);
+        }).fail(function(xhr, status, error){
+            $('#loading').modal('hide');
+            alert(xhr.responseText)
+        });
+    }
+    function checkFormDataPush(){
+      var p = document.getElementById('error_push')
+      var password = (document.getElementById('message-text-push').value).trim();
+      console.log(password)
+      if(!password){
+          p.innerHTML = "Please enter message"
+          return false;
+      }
+      p.innerHTML = ""
+      var userId = (document.getElementById('lblPushUserId').innerHTML).trim();
+      var url = 'loadData?functionName=sendPushToUser'
+      var params = {}
+      params.msg = password
+      params.userId = userId
+
+      $('#loading').modal('show');
+      $.post( url, params)
+        .done(function( results ) {
+        $('#sendPush').modal('hide');
+        $('#loading').modal('hide');
+          $('#done').modal('show');
+            var timer = setInterval(function() { 
+              $('#done').modal('hide');
+              clearInterval(timer);
+            }, 1000);
+        }).fail(function(xhr, status, error){
+            $('#loading').modal('hide');
+            alert(xhr.responseText)
+        });
+    }
+  $('#imageModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    var modal = $(this)
+    console.log(data)
+    var output = document.getElementById('imageModalImg');
+    output.src = data
+  })
+  $('#sendSMS').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var data = button.data('whatever') 
+    var userData = eval('(' + data + ')')
+    var modal = $(this)
+    modal.find('.modal-title').text('Send to ' + userData.name)
+    modal.find('.modal-body input').val(userData.phone)
+    document.getElementById('lblCountryCode').innerHTML = userData.countryCode
+    document.getElementById('lblUserId').innerHTML = userData.userId
+    var p = document.getElementById('error')
+    p.innerHTML = ""
+  })
+  $('#sendPush').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    var userData = eval('(' + data + ')')
+    var modal = $(this)
+    modal.find('.modal-title').text('Send push to ' + userData.name)
+    document.getElementById('lblPushUserId').innerHTML = userData.userId
+    var p = document.getElementById('error_push')
+    p.innerHTML = ""
+  })
+</script>

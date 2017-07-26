@@ -1,0 +1,82 @@
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+<!-- Main Header -->
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="home" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b><%= devNameBold.slice(0,1) %></b><%= devNameThin.slice(0,1) %></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b><%= devNameBold %></b><%= devNameThin %></span>
+
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <label style="color: #fff;padding-top: 10px;padding-left: 10px;font-size: 22px;font-weight: normal;">
+          <i class="fa fa-adn"></i> <b><%= app.name -%></b>
+      </label>  
+     <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu">
+            <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown"> -->
+            <% if (superAdminAccess || adminAccess) { -%>
+                <a href="add_post">
+             <%}else{ -%>   
+                <a href="add_post_editor">  
+             <%}-%>   
+
+              <i class="fa fa-plus"></i>
+            </a>
+            <!-- <ul class="dropdown-menu">
+              <li> -->
+                <!-- inner menu: contains the actual data -->
+                <!-- <ul class="menu">
+                  <li><a href="add_post"><i class="fa fa-pencil-square-o text-aqua"></i>Add Post</a></li>
+                  <li><a href="add_category"><i class="fa fa-th text-purple"></i> Add Category</a></li>
+                  <li><a href="add_push"><i class="fa fa-bell text-green"></i> Add Push</a></li>
+                  <li><a href="add_app"><i class="fa fa-apple"></i>Add Application</a></li> -->
+                  <% if (superAdminAccess) { -%>
+                    <!-- <li><a href="add_admin"><i class="fa fa-user-secret text-red"></i>Add Admin</a></li> -->
+                  <% } %>
+                <!-- </ul>
+              </li>
+            </ul> -->
+          </li><!--  notifictaion -->
+          <li>
+            <a href="logout">
+              <i class="fa fa-power-off"></i>
+            </a>
+          <li>
+        </ul>
+      </div>
+    </nav>
+  </header>

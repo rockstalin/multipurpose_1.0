@@ -1,0 +1,96 @@
+ <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu">
+        <li class="header">MENU</li>
+            <% if (superAdminAccess || adminAccess) { -%>
+                    <!-- Optionally, you can add icons to the links -->
+                    <li class="active"><a href="home"><i class="fa fa-tachometer"></i> <span>Dashboard</span></a></li>
+
+                    <li ><a href="#"><i class="fa fa-pencil-square-o"></i> <span>Post</span>
+                       <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                      </a>
+                       <ul class="treeview-menu">
+                        <li><a href="post_list">Posts</a></li>
+                        <li><a href="add_post">Add Post</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="#"><i class="fa fa-th"></i> <span>Category</span>
+                      <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                      </a>
+                         <ul class="treeview-menu">
+                          <li><a href="category_list">Categories</a></li>
+                          <li><a href="add_category">Add Category</a></li>
+                        </ul>
+                      </li>
+                    <li><a href="user_list"><i class="fa fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="installations"><i class="fa fa-mobile"></i> <span>Installations</span></a></li>
+                    <!-- <li><a href="requests"><i class="fa fa-pencil-square"></i> <span>Requests</span></a></li> -->
+                    <li><a href="#"><i class="fa fa-bell"></i> <span>Push/IAM</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                         <ul class="treeview-menu">
+                          <li><a href="push_list">Pushes/IAM</a></li>
+                          <li><a href="add_push">Add Push/IAM</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fa fa-adn"></i> <span>Application</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                         <ul class="treeview-menu">
+                          <li><a href="app_list">Applications</a></li>
+                          <li><a href="add_app">Add Application</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fa fa-apple"></i> <span>iOS Push Certificates</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                         <ul class="treeview-menu">
+                          <li><a href="certificates_list">Certificates</a></li>
+                          <li><a href="add_certificates">Add Certificate</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fa fa-android"></i> <span>Android Push</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                         <ul class="treeview-menu">
+                          <li><a href="android_push_list">List</a></li>
+                          <li><a href="add_android_push">Add</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li><a href="#"><i class="fa fa-gear"></i> <span>Remote Control</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                         <ul class="treeview-menu">
+                          <li><a href="configuration_list">Configurations</a></li>
+                          <li><a href="add_configuration">Add Configuration</a></li>
+                        </ul>
+                    </li>
+                    <% if (superAdminAccess) { -%>
+                      <li><a href="#"><i class="fa fa-user-secret"></i> <span>Admin</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                      </a>
+                         <ul class="treeview-menu">
+                          <li><a href="admin_list">Admins</a></li>
+                          <li><a href="add_admin">Add Admin</a></li>
+                        </ul>
+                    </li>
+                    <% } else { -%>
+                    <% } -%>
+                    <% if (superAdminAccess) { -%>
+                      <li><a href="database"><i class="fa fa-database"></i> <span>Database</span></a></li>
+                    <% } else { -%>
+                    <% } -%>
+                    <li><a href="logout"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
+            <% } else { -%>
+                    <li><a href="post_list_editor_rejected"><i class="fa fa-flag-checkered"></i> <span>Rejected</span></a></li>
+                    <li><a href="post_list_editor_pending"><i class="fa fa-pencil-square"></i> <span>Pending</span></a></li>
+                    <li><a href="post_list_editor_approved"><i class="fa fa-check-circle"></i> <span>Approved</span></a></li>
+                    
+            <% } -%>  
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+  </aside>

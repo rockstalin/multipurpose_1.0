@@ -1,0 +1,133 @@
+<div class="col-lg-4" id="divLeft">
+</div>
+<div class="col-lg-4" id="divCentre">
+</div>
+<div class="col-lg-4" id="divRight">
+</div> 
+
+<% for (var i = 0; i < results.length; i++) { 
+  var item = results[i];
+
+  var type = item.type
+  var media = undefined
+  var mediaThumbnail = undefined
+  if(item.media && item.media.url)
+    media = item.media.url
+  if(item.mediaThumbnail && item.mediaThumbnail.url)
+    mediaThumbnail = item.mediaThumbnail.url
+  var str = objectToString(item)
+  -%>
+  <script type="text/javascript">
+    var postId = "<%= item.objectId %>"
+    var title = "<%= item.title %>"
+    var timeZone = "<%= item.timeZone%>"
+    var categoryName = "<%= item.type%>"
+    
+    var publishedAgo = "<%= item.createdAgo %>"
+    var html = '<div class="info-box" style="padding: 5px 10px; float: left;">'+
+          '<div class="timeline-item">'+
+              '<span class="timeline-header"><a href="push_details?objectId='+postId+'">'+ title+'</a></span>'+
+          '</div>'+
+          '<div class="category_details" style="font-size: 16px;margin-bottom:10px; color:#999;">'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px">'+
+                '<i class="fa fa-map-marker"></i> '+timeZone+
+              '</span>'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px"><i class="fa fa-clock-o"></i> '+ publishedAgo+'</span>'+
+              '<span class="users-list-date">'+
+                "Type : <strong>"+categoryName+"</strong>"+
+              '</span>'+
+          '</div>'+
+          '<div class="timeline-body">';
+                <% if (media && mediaThumbnail) {  -%>
+                  html += '<div class="embed-responsive embed-responsive-16by9">'+
+                      '<video class="embed-responsive-item" src="'+"<%= media %>"+'" type="video/mp4" controls></video>'+
+                    '</div>';
+                <% }else if (media) {  -%>
+                    html += '<img data-toggle="modal" data-whatever='+"<%= media %>"+' data-target="#imageModal" class="img img-responsive full-width" src="'+"<%= media %>"+'">';
+                <% } else{  -%>
+                    html += '<span class="timeline-header">'+"<%= item.description %>"+'</span>';
+                <% } -%>
+              
+          html += '</div>'+
+          '<div style="margin-top:0px;background:#f6f6f6;padding:0px" class="col-lg-12">'+
+            '<span class="info-box-icon" style="padding:4px 10px;background:#dedede;">';
+                <% if (item.fromUser && item.fromUser.profilePicture && item.fromUser.profilePicture.url) { -%>
+                  html += '<img src="<%= item.fromUser.profilePicture.url %>" class="img-circle" style="margin-top:-20px">'
+                <% } else { -%>
+                  html += '<i class="fa fa-image"></i>'
+                <% } -%>
+            html += '</span>'+
+            '<div class="info-box-content" style="padding-top:11px; background:none">'
+              <% if (item.fromUser && item.fromUser.facebookId) { -%>
+                  html += '<a href="http://fb.com/<%= item.fromUser.facebookId %>" target="new">'
+                <% } else { -%>
+                  html += '<a href="#">'
+                <% } -%>
+                <% if (item.fromUser) {-%>
+                    html += '<span class="info-box-number"><%= item.fromUser.fullName %></span></a>'+
+                            '<div style="float:left">'+
+                                '<span class="users-list-date" style="padding-top:3px"><%= item.fromUser.createdAgo %></span>'+
+                                '<span class="users-list-date" style="margin-top:3px"><%= item.fromUser.timeZone %></span>'+
+                            '</div>'
+                          
+                <% } -%>
+                html += '<div style="float:right">'+
+                '</div>'+
+            '</div>'+
+          '</div>'+
+      '</div>';
+      <% if (i%3 === 0) { -%>
+          $('#divLeft').append(html);
+      <% } else if (i%3 === 1){ -%>
+          $('#divCentre').append(html);
+      <% } else { -%>
+          $('#divRight').append(html);
+      <% } -%>
+
+  </script>
+    
+<% } -%>
+
+<!-- Confirmaion -->
+<div class="modal fade" style = "padding-top:15%" id="deleteAction" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-footer">
+          <label hidden="true" id="lblObjectId"></label>
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="deleteAction()" id="btnSend">Delete</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+<div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="padding-top: 10px">
+    <div class="modal-content" style="padding: 5px;border-radius: 5px;width: 100%;margin: 0 auto;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <img id="imageModalImg" src="" class="img-responsive">
+    </div>
+  </div>
+</div>
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+<link rel="stylesheet" href="../lte/plugins/iCheck/square/blue.css">
+<script src="../lte/plugins/iCheck/icheck.min.js"></script>
+<script type="text/javascript">
+
+  $('#imageModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever')
+    var modal = $(this)
+    var output = document.getElementById('imageModalImg');
+    output.src = data
+  })
+</script>

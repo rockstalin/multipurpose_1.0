@@ -1,0 +1,102 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+<div class="content-wrapper">
+  <% 
+      object = decodeObject(object)
+      function decodeObject (obj) {for (var key in obj) {if (obj.hasOwnProperty(key)) {if(typeof obj[key] == 'object'){if(obj[key] instanceof Array){for(var j=0;j<obj[key].length;j++){if(typeof obj[key][j]=='object') {obj[key][j] = decodeObject(obj[key][j])}else{obj[key][j]=  decodeURIComponent(decodeURIComponent(obj[key][j]))}}}else{obj[key] = decodeObject(obj[key]);}}else {obj[key] = decodeURIComponent(decodeURIComponent(obj[key]))}}}return obj;}
+  %>
+  <section class="content">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="box box-success">
+              <div class="box-header with-border">
+                <h3 class="box-title">Update Android Push</h3>
+              </div>
+                <form role="form" class="form-horizontal">
+                  <div class="box-body">
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">Reference Name: </label>
+                        <div class="col-sm-8">
+                          <input type="text" placeholder="Notes, So that you can remember" id="referenceName" class="form-control" value="<%=object.referenceName%>">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label" style="padding-left: 10px;padding-right: 0px">senderId: </label>
+                        <div class="col-sm-8">
+                          <input type="text" placeholder="Sender Id" id="senderId" class="form-control" value="<%=object.senderId%>">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-4 control-label">apiKey</label>
+                        <div class="col-sm-8">
+                          <input type="text" placeholder="Api Key" id="apiKey" class="form-control" value="<%=object.apiKey%>">
+                        </div>
+                      </div>
+                      <label style="color:red; width: 100%;text-align: center;" id="error">&nbsp;</label>
+                  </div>
+                  <div class="box-footer">
+                    <button class="btn btn-primary btn-lg btn-block btn-success" onclick="addAction()" type="button">Update Android Push</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.box -->
+        </div>
+      </div>
+    <!-- /.row -->
+  </section>
+
+  <!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+</div>
+<!-- /.content-wrapper -->
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+
+<script>
+  var objectId = "<%- object.objectId %>"
+  var referenceName,senderId,apiKey;
+  
+  function addAction(){
+    var p = document.getElementById('error')
+    referenceName = (document.getElementById('referenceName').value).trim();
+    senderId = (document.getElementById('senderId').value).trim();
+    apiKey = (document.getElementById('apiKey').value).trim();
+    
+    if(!referenceName){
+        p.innerHTML = "Please enter Reference Name"
+        return false;
+    }else if(!senderId){
+        p.innerHTML = "Please enter SenderId"
+        return false;
+    }else if(!apiKey){
+        p.innerHTML = "Please enter Api Key"
+        return false;
+    }
+    p.innerHTML = "&nbsp;"
+    var url = 'loadData?functionName=updateAndroidPush'
+    var params = {'objectId':objectId,'referenceName':referenceName,'senderId':senderId,'apiKey':apiKey}
+      
+    $('#loadingModal').modal('show');
+    $.post( url, params)
+    .done(function( results ) {
+        $('#loadingModal').modal('hide');
+        window.location.href = 'android_push_list'
+    }).fail(function(xhr, status, error){
+        $('#loadingModal').modal('hide');
+        alert(xhr)
+    });
+  }
+  $(function () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+</script>

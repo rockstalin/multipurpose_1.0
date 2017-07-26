@@ -1,0 +1,174 @@
+<% results.forEach(function (item) { 
+  var image = undefined
+  if(item.image && item.image.url)
+    image = item.image.url
+  var str = "{'name':\""+item.name+"\",'objectId':'"+item.objectId+"','url':'"+image+"'}"
+  %>
+   <!-- /.col -->
+       <div class="col-md-4" id="divRoot_<%=item.objectId-%>">
+         <div class="info-box">
+            <a href="post_list?categoryId=<%= item.objectId %>" style="color: inherit">
+              <span class="info-box-icon" style="padding:4px 10px;background:#dedede">
+                <% if (image) { -%>
+                  <img src="<%= image %>" class="img-circle" style="margin-top:-20px">  
+                <% } else { -%>
+                  <i class="fa fa-image"></i>  
+                <% } -%>
+              </span>
+            </a>
+            <div class="info-box-content" style="padding-top:2px">
+              <a href="post_list?categoryId=<%= item.objectId %>" style="color: inherit">
+                <span class="info-box-number"><%= item.name %></span>
+              </a>
+                <div style="float:left">
+                  <span class="users-list-date"><%= item.postCount %> posts</span>
+                  <span class="users-list-date" ><%= item.subscribers - item.fakeSubscribers %> subscribers</span>
+                  <strong><button class="btn btn-primary btn-sm" onclick="editCategory(<%= str %>)" style="padding:0px 5px;">Edit</button></strong>
+                  <!-- <strong><button class="btn btn-primary btn-sm" type="button" style="padding:0px 5px;" onclick="validateCategory('<%= item.objectId %>')">Validate</button></strong> -->
+                  <button onclick="fakeAction(<%= str %>)" type="button" style="padding:0px 5px;" class="btn btn-warning ">+Fake Data
+                </div>
+                <div style="float:right">
+                  <span class="users-list-date" style="min-width: 80px"><%= item.createdAgo %></span>
+                  <span class="users-list-date" id="lblFake_<%= item.objectId %>"><strong><%= item.fakeSubscribers %> fake</strong></span>
+                  <strong><button class="btn btn-danger btn-sm" type="button" style="padding:0px 5px;" data-toggle="modal" data-whatever="<%= str %>" data-target="#deleteCategory">Delete</button></strong>
+                </div>
+            </div>
+          <!-- /.info-box-content -->
+         </div>
+         <!-- /.info-box -->
+       </div>
+  <!-- /.col -->
+  
+<% }); %> 
+
+<!-- Small modal -->
+<div class="modal fade" style = "padding-top:15%" id="deleteCategory" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-footer">
+          <label hidden="true" id="lblCategoryId"></label>
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="deleteCategory()" id="btnSend">Delete</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+<!-- Small Loader -->
+<div class="modal fade" style = "padding-top:15%" id="validateCategory" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="text-align: center;">Validating Category</h4>
+        </div>
+      </div>
+  </div>
+</div>
+
+<!-- Small modal -->
+  <div class="modal fade" style = "padding-top:15%" id="successModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" style="text-align: center;">Category Validated</h4>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModalDim" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+<script>
+
+// jquery extend function
+$.extend(
+{
+    redirectPost: function(location, args)
+    {
+        var form = $('<form></form>');
+        form.attr("method", "post");
+        form.attr("action", location);
+
+        $.each( args, function( key, value ) {
+            var field = $('<input></input>');
+            field.attr("type", "hidden");
+            field.attr("name", key);
+            field.attr("value", value);
+            form.append(field);
+        });
+        $(form).appendTo('body').submit();
+    }
+});
+
+  function fakeAction(params){
+      var url = 'loadData?functionName=addFakeDataToCategory'
+      var params = {'objectId':params.objectId}
+      $('#loadingModalDim').modal('show');
+      $.post( url, params)
+        .done(function( results ) {
+          $('#loadingModalDim').modal('hide');
+          document.getElementById('lblFake_'+results.objectId).innerHTML = results.fakeSubscribers+ " fake"
+          // window.location.href = 'post_list'
+        }).fail(function(xhr, status, error){
+            $('#loadingModalDim').modal('hide');
+            alert(xhr.responseText)
+        });
+    }
+
+  function editCategory(params){
+      $.redirectPost("edit_category", params);
+    }
+  function validateCategory(categoryId){
+      console.log("india")
+      var url = 'loadData?functionName=validatePostCount'
+      var params = {'objectId':categoryId}
+      console.log(url)
+      console.log(params)
+      $('#validateCategory').modal('show');
+
+      $.post( url, params)
+          .done(function( results ) {
+            $('#validateCategory').modal('hide');
+            $('#successModal').modal('show');
+            var timer = setInterval(function() { 
+                $('#successModal').modal('hide');
+                clearInterval(timer);
+            }, 1000);
+          }).fail(function(xhr, status, error){
+              alert(xhr.responseText)
+          });
+    }
+  function deleteCategory(){
+      var categoryId = (document.getElementById('lblCategoryId').innerHTML).trim();
+      var url = 'loadData?functionName=deleteCategory'
+      var params = {'objectId':categoryId}
+      $('#loadingModalDim').modal('show');
+      $.post( url, params)
+          .done(function( results ) {
+            $('#deleteCategory').modal('hide');
+            $('#loadingModalDim').modal('hide');
+            var elem = document.getElementById('divRoot_'+categoryId);
+            elem.parentNode.removeChild(elem);
+          }).fail(function(xhr, status, error){
+            $('#loadingModalDim').modal('hide');
+              // alert(xhr.responseText)
+              alert("This Category has posts, Delete posts to delete this Category")
+          });
+    }
+  $('#deleteCategory').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    data = eval('(' + data + ')')
+    var modal = $(this)
+    modal.find('.modal-title').text('Delete ' + data.name+' ?')
+    document.getElementById('lblCategoryId').innerHTML = data.objectId
+  })
+</script>

@@ -1,0 +1,57 @@
+<% include ./common/head %>
+<script>
+ 
+  function checkRegistration(){
+    var p = document.getElementById('error')
+    var username = (document.getElementById('username').value).trim();
+      if(!username){
+          p.innerHTML = "Please enter username"
+          return false;
+      }
+      var password = (document.getElementById('password').value).trim();
+      if(!password){
+          p.innerHTML = "Please enter password"
+          return false;
+      }
+      p.innerHTML = ""
+      return true;
+  }
+</script>
+
+</head>
+<body class="hold-transition login-page">
+
+<div class="login-box">
+  <div class="login-logo">
+      <b><%= devNameBold %></b><%= devNameThin %>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body" style="padding-left:30px;padding-right:30px">
+  <p class="login-box-msg" >Sign in to start your session</p>
+  <p class="login-box-msg" style="color:red" id="error"><%= error %></p>
+  
+    <form class="form-horizontal" onsubmit="return checkRegistration()" method="post" action="login">
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" placeholder="Username" id="username" name="username">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="password" class="form-control" placeholder="Password" id="password" name="password">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <div class="row">
+        <!-- /.col -->
+        <div class="center-block">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Login</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+  
+
+<!-- REQUIRED JS SCRIPTS -->
+<% include ./common/footer_js %>

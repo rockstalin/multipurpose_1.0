@@ -1,0 +1,37 @@
+<% 
+var i =0 
+results.forEach(function (item) {
+  %>
+    <div class="col-md-3" style="padding: 10px">
+
+    <% if (i%12 == 0) { -%>
+      <div style="padding: 10px;height: 45px" class="bg-blue">
+    <% } else if(i%11 == 0) { -%>
+      <div style="padding: 10px;height: 45px" class="bg-red">
+    <% } else if(i%10 == 0){ -%>
+      <div style="padding: 10px;height: 45px" class="bg-green">
+    <% } else if(i%9 == 0) { -%>
+      <div style="padding: 10px;height: 45px" class="bg-red">
+    <% } else if(i%8 == 0){ -%>
+      <div style="padding: 10px;height: 45px" class="bg-aqua">
+    <% } else if(i%7 == 0) { -%>
+      <div style="padding: 10px;height: 45px" class="bg-yellow">
+    <% } else if(i%6 == 0){ -%>
+      <div style="padding: 10px;height: 45px" class="bg-navy">
+    <% } else if(i%5 == 0) { -%>
+      <div style="padding: 10px;height: 45px" class="bg-black">
+    <% } else if(i%4 == 0){ -%>
+      <div style="padding: 10px;height: 45px" class="bg-red">
+    <% } else if(i%3 == 0) { -%>
+      <div style="padding: 10px;height: 45px" class="bg-black">
+    <% } else if(i%2 == 0){ -%>
+      <div style="padding: 10px;height: 45px" class="bg-green">
+    <% } else { -%>
+      <div style="padding: 10px;height: 45px;" class="bg-navy">
+    <% } -%>
+      
+          <span class="info-box-number pull-left" style="font-weight: normal;"><%= item.dateStr %> :</span>
+          <span class="info-box-number pull-left" style="margin-left: 5px;"><%= item.count %> hits</span>
+      </div>
+    </div>
+<% i++;  }); %>

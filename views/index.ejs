@@ -1,0 +1,276 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+  
+  <!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Welcome <%= user.get("fullName") %>
+      <small> 
+      </small>
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+     <!-- Info boxes -->
+      <div class="row">
+          <!-- col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-blue" style="padding: 10px">
+              <span class="info-box-text" style="padding: 0px;margin: 0px;">Change Application</span>
+              <form method="post" action="select_app_home" style="margin-top: 5px">
+                      <select onchange="this.form.submit()" id="app" name="app" class="form-control select2" style="width: 100%;">
+                          <% for (var i = 0; i < apps.length; i++) { 
+                            var appObj = JSON.stringify(apps[i])
+                            var appName = apps[i].get("name")
+                            if ( apps[i].id===app.objectId) { -%>
+                              <option selected="selected" value='<%= appObj %>' ><%= appName %></option>
+                            <% } else { -%>
+                              <option value='<%= appObj %>' ><%= appName %></option>
+                            <% } 
+                          } -%>
+                      </select>
+              </form>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <a href="add_post" style="color: inherit;">
+              <span class="info-box-icon bg-orange"><i class="fa fa-pencil-square-o"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-number" style="margin-top: 15px">Add Post</span>
+              </div>
+            </a>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <a href="post_list" style="color: inherit;">
+              <span class="info-box-icon bg-aqua"><i class="fa fa-pencil-square-o"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Posts</span>
+                <span class="info-box-number"><%= statistics.postCount %></small></span>
+              </div>
+            </a>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="installations" style="color: inherit;">
+            <span class="info-box-icon bg-red"><i class="fa fa-mobile"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Installations</span>
+              <span class="info-box-number"><%= statistics.installationCount %></span>
+              <span class="info-box-text"><%= statistics.installationCountTotal %> IAA</span>
+            </div>
+            <!-- /.info-box-content -->
+            </a>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="user_list" style="color: inherit;">
+            <span class="info-box-icon bg-green"><i class="fa fa-users"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Users</span>
+              <span class="info-box-number"><%= statistics.userCount %></span>
+              <span class="info-box-text"><%= statistics.userCountTotal %> IAA</span>
+            </div>
+            <!-- /.info-box-content -->
+            </a>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="requests" style="color: inherit;">
+            <span class="info-box-icon bg-blue"><i class="fa fa-pencil-square"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Requests</span>
+              <span class="info-box-number"><%= //statistics.postRequestCount %></span>
+              <span class="info-box-text"><%= //statistics.postRequestCountTotal %> IAA</span>
+            </div>
+            </a>
+          </div>
+        </div> -->
+        <!-- /.col -->
+
+        <!-- /.col -->
+        <% 
+        var foceDisable = true
+        if (!foceDisable) { -%>
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                <a href="post_list_user" style="color: inherit;">
+                  <span class="info-box-icon bg-blue"><i class="fa fa-flag-checkered"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Posts By Users</span>
+                    <span class="info-box-number"><%= statistics.postByUserCountTotal %></span>
+                    <% 
+                      if (statistics.postByUserCountTotal > 0) { -%>
+                        <span class="info-box-text" style="color: #dd4b39;font-weight: bold;">Approve Now</span>
+                      <%}else{-%>
+                        <span class="info-box-text" style="color: #00a65a;font-weight: bold;">All Approved</span>
+                      <%}
+                    -%>
+                    
+                  </div>
+                  <!-- /.info-box-content -->
+                  </a>
+                </div>
+                <!-- /.info-box -->
+              </div>
+              <!-- /.col -->
+        <% } -%>
+
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="post_list_editor" style="color: inherit;">
+            <span class="info-box-icon bg-blue"><i class="fa fa-check-circle"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Posts by Editors</span>
+              <span class="info-box-number"><%= statistics.postByEditorCountTotal %></span>
+              <% 
+                if (statistics.postByEditorCountTotal > 0) { -%>
+                  <span class="info-box-text" style="color: #dd4b39;font-weight: bold;">Approve Now</span>
+                <%}else{-%>
+                  <span class="info-box-text" style="color: #00a65a;font-weight: bold;">All Approved</span>
+                <%}
+              -%>
+            </div>
+            <!-- /.info-box-content -->
+            </a>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+        <a href="category_list" style="color: inherit">
+          <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+            <a href="category_list" style="color: inherit;">
+              <span class="info-box-icon bg-yellow"><i class="fa fa-th"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Categories</span>
+                <span class="info-box-number"><%= statistics.categoryCount %></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            </a>
+            <!-- /.info-box -->
+          </div>
+        </a>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <a href="app_list" style="color: inherit;">
+            <span class="info-box-icon bg-purple"><i class="fa fa-adn"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Applications</span>
+              <span class="info-box-number"><%= apps.length %></span>
+            </div>
+           </a> 
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <a href="api_hits" style="color: inherit;">
+              <span class="info-box-icon bg-aqua"><i class="fa fa-bar-chart-o"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-number">API Hits</span>
+                <span class="info-box-text"><%= statistics.todayHitCount %> today</span>
+                <span class="users-list-date">Daily API Hits by all iOS & Android Apps</span>
+              </div>
+            </a>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+          <button type="button" style="background: none;padding: 0px;margin: 0px;border: 0px" onclick="restart()">
+            <span class="info-box-icon bg-black"><i class="fa fa-laptop"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-number" style="width: 100%;text-align: left">Restart</span>
+              <span class="users-list-date" style="width: 100%;text-align: left">NodeJS process will be restarted </span>
+            </div>
+          </button>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+
+  </section>
+  <!-- /.content -->
+  <!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+</div>
+<!-- /.content-wrapper -->
+
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+<script>
+  function restart(){
+      var url = 'restart'
+      $('#loadingModal').modal('show');
+      $.get( url)
+        .done(function( results ) {
+          $('#loadingModal').modal('hide');
+        }).fail(function(xhr, status, error){
+            $('#loadingModal').modal('hide');
+            // alert(xhr.responseText)
+        });
+    }
+  $(function () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+</script>

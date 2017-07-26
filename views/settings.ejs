@@ -1,0 +1,426 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+<div class="content-wrapper">
+  <section class="content">
+  <div class="row">
+    <div class="col-md-8">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Settings</h3>
+            </div>
+          <!-- /.box -->
+          <form role="form" class="form-horizontal">
+          <% 
+            var object = {} 
+            for (var i = 0; i < categories.length; i++) {
+              var obj = categories[i]
+              if(obj.type ===  "email"){
+                if(obj.deviceType === "ios"){
+                  object.emailIOS= obj.content
+                }else if(obj.deviceType === "android"){
+                  object.emailAndroid= obj.content
+                }
+              }else if(obj.type ===  "facebook"){
+                if(obj.deviceType === "ios"){
+                  object.facebookIOS= obj.content
+                }else if(obj.deviceType === "android"){
+                  object.facebookAndroid= obj.content
+                }
+              }else if(obj.type ===  "terms"){
+                  object.terms= obj.content
+              }else if(obj.type ===  "admob"){
+                if(obj.deviceType === "ios"){
+                  object.admobIOS = obj.admob
+                  if(obj.admob.banner && obj.admob.banner.code)
+                    object.admobIOSBannerCode= obj.admob.banner.code
+                  if(obj.admob.banner && obj.admob.banner.show)
+                    object.admobIOSBannerShow= obj.admob.banner.show
+                  if(obj.admob.interstitial && obj.admob.interstitial.code)
+                    object.admobIOSInterstitialCode= obj.admob.interstitial.code
+                  if(obj.admob.interstitial && obj.admob.interstitial.show)
+                    object.admobIOSInterstitialShow= obj.admob.interstitial.show
+                  if(obj.admob.native && obj.admob.native.code)
+                    object.admobIOSNativeCode= obj.admob.native.code
+                  if(obj.admob.native && obj.admob.native.show)
+                    object.admobIOSNativeShow= obj.admob.native.show
+                }else if(obj.deviceType === "android"){
+                  object.admobAndroid = obj.admob
+                  if(obj.admob.banner && obj.admob.banner.code)
+                    object.admobAndroidBannerCode= obj.admob.banner.code
+                  if(obj.admob.banner && obj.admob.banner.show)
+                    object.admobAndroidBannerShow= obj.admob.banner.show
+                  if(obj.admob.interstitial && obj.admob.interstitial.code)
+                    object.admobAndroidInterstitialCode= obj.admob.interstitial.code
+                  if(obj.admob.interstitial && obj.admob.interstitial.show)
+                    object.admobAndroidInterstitialShow= obj.admob.interstitial.show
+                  if(obj.admob.native && obj.admob.native.code)
+                    object.admobAndroidNativeCode= obj.admob.native.code
+                  if(obj.admob.native && obj.admob.native.show)
+                    object.admobAndroidNativeShow= obj.admob.native.show
+                }
+              }
+            }
+          %>
+              <div class="box-body">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Email iOS: </label>
+                    <div class="col-sm-8">
+                      <button type="button" id="emailIOS" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'emailIOS','value':'<%= object.emailIOS %>'}" data-target="#sendSMS"><%= object.emailIOS %></button>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Email Android: </label>
+                    <div class="col-sm-8">
+                      <button type="button" id="emailAndroid" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'emailAndroid','value':'<%= object.emailAndroid %>'}" data-target="#sendSMS"><%= object.emailAndroid %></button>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label">Facebook iOS: </label>
+                      <div class="col-sm-8">
+                        <button type="button" id="facebookIOS" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'facebookIOS','value':'<%= object.facebookIOS %>'}" data-target="#sendSMS"><%= object.facebookIOS %></button>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label">Facebook Android: </label>
+                      <div class="col-sm-8">
+                        <button type="button" id="facebookAndroid" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'facebookAndroid','value':'<%= object.facebookAndroid %>'}" data-target="#sendSMS"><%= object.facebookAndroid %></button>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Terms :</label>
+                    <div class="col-sm-8">
+                      <button type="button" id="terms" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'terms','value':'<%= encodeURIComponent(object.terms) %>'}" data-target="#termsModal">Terms</button>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label" >Admob iOS:</label>
+                    <div class="col-sm-8">
+                      <div class="col-sm-3" style="padding: 0px;padding-top: 5px">
+                        <% if (object.admobIOSBannerShow) { -%>
+                          <input type="checkbox" id="admobIOSBannerShow" checked="" onchange="onCbValueChange(this)"> Banner  
+                        <% } else { -%>
+                          <input type="checkbox" id="admobIOSBannerShow" onchange="onCbValueChange(this)"> Banner  
+                        <% } -%>
+                      </div>
+                      <div class="col-sm-9" style="padding: 0px">
+                        <button type="button" id="admobIOSBannerCode" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'admobIOSBannerCode','value':'<%= object.admobIOSBannerCode %>'}" data-target="#sendSMS"><%= object.admobIOSBannerCode %></button>
+                      </div>
+                      <div class="col-sm-3" style="padding: 0px;padding-top: 5px;margin-top: 5px">
+                        <% if (object.admobIOSInterstitialShow) { -%>
+                          <input type="checkbox" id = "admobIOSInterstitialShow" checked="" onchange="onCbValueChange(this)"> Interstitial  
+                        <% } else { -%>
+                          <input type="checkbox" id = "admobIOSInterstitialShow" onchange="onCbValueChange(this)"> Interstitial  
+                        <% } -%>
+                      </div>
+                      <div class="col-sm-9" style="padding: 0px;margin-top: 5px">
+                        <button type="button" id="admobIOSInterstitialCode" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'admobIOSInterstitialCode','value':'<%= object.admobIOSInterstitialCode %>'}" data-target="#sendSMS"><%= object.admobIOSInterstitialCode %></button>
+                      </div>
+                       <div class="col-sm-3" style="padding: 0px;padding-top: 5px;margin-top: 5px">
+                        <% if (object.admobIOSNativeShow) { -%>
+                          <input type="checkbox" id = "admobIOSNativeShow" checked="" onchange="onCbValueChange(this)"> Native  
+                        <% } else { -%>
+                          <input type="checkbox" id = "admobIOSNativeShow" onchange="onCbValueChange(this)"> Native  
+                        <% } -%>
+                      </div>
+                      <div class="col-sm-9" style="padding: 0px;margin-top: 5px">
+                        <button type="button" id="admobIOSNativeCode" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'admobIOSNativeCode','value':'<%= object.admobIOSNativeCode %>'}" data-target="#sendSMS"><%= object.admobIOSNativeCode %></button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label" >Admob Android:</label>
+                    <div class="col-sm-8">
+                      <div class="col-sm-3" style="padding: 0px;padding-top: 5px">
+                        <% if (object.admobAndroidBannerShow) { -%>
+                          <input type="checkbox" id = "admobAndroidBannerShow" checked="" onchange="onCbValueChange(this)"> Banner  
+                        <% } else { -%>
+                          <input type="checkbox" id = "admobAndroidBannerShow" onchange="onCbValueChange(this)"> Banner  
+                        <% } -%>
+                      </div>
+                      <div class="col-sm-9" style="padding: 0px">
+                        <button type="button" id="admobAndroidBannerCode" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'admobAndroidBannerCode','value':'<%= object.admobAndroidBannerCode %>'}" data-target="#sendSMS"><%= object.admobAndroidBannerCode %></button>
+                      </div>
+                      <div class="col-sm-3" style="padding: 0px;padding-top: 5px;margin-top: 5px">
+                        <% if (object.admobAndroidInterstitialShow) { -%>
+                          <input type="checkbox" id = "admobAndroidInterstitialShow" checked="" onchange="onCbValueChange(this)"> Interstitial  
+                        <% } else { -%>
+                          <input type="checkbox" id = "admobAndroidInterstitialShow" onchange="onCbValueChange(this)"> Interstitial  
+                        <% } -%>
+                      </div>
+                      <div class="col-sm-9" style="padding: 0px;margin-top: 5px">
+                        <button type="button" id="admobAndroidInterstitialCode" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'admobAndroidInterstitialCode','value':'<%= object.admobAndroidInterstitialCode %>'}" data-target="#sendSMS"><%= object.admobAndroidInterstitialCode %></button>
+                      </div>
+                       <div class="col-sm-3" style="padding: 0px;padding-top: 5px;margin-top: 5px">
+                        <% if (object.admobAndroidNativeShow) { -%>
+                          <input type="checkbox" id = "admobAndroidNativeShow" checked="" onchange="onCbValueChange(this)"> Native  
+                        <% } else { -%>
+                          <input type="checkbox" id = "admobAndroidNativeShow" onchange="onCbValueChange(this)"> Native  
+                        <% } -%>
+                      </div>
+                      <div class="col-sm-9" style="padding: 0px;margin-top: 5px">
+                        <button type="button" id="admobAndroidNativeCode" class="form-control text-left" data-toggle="modal" data-whatever="{'key':'admobAndroidNativeCode','value':'<%= object.admobAndroidNativeCode %>'}" data-target="#sendSMS"><%= object.admobAndroidNativeCode %></button>
+                      </div>
+                    </div>
+                  </div>
+                  
+              </div>
+            </form>
+            </div>
+    </div>
+    </div>
+    <!-- /.row -->
+  </section>
+
+  <!-- Small modal -->
+  <div class="modal fade" style = "padding-top:15%" id="successModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header" style="border-radius: 5px">
+            <h4 class="modal-title">Saved</h4>
+          </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Dialogs -->
+
+<div class="modal fade" style = "padding-top:10%" id="sendSMS" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label class="control-label" id="lblKey"></label>
+            <input type="text" class="form-control" id="inputValue">
+            <label style="color:red" id="error"></label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="checkFormData()">Save</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" style = "padding-top:1%" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label class="control-label" id="lblKeyTerms"></label>
+            <textarea id="inputValueTerms"></textarea>
+            <label style="color:red" id="error"></label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="checkFormDataTerms()">Save</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+</div>
+<!-- /.content-wrapper -->
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+
+<link rel="stylesheet" href="../lte/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css">
+<script src="../lte/plugins/datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="../lte/plugins/datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="../lte/plugins/datetimepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+
+<!-- CK Editor -->
+<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+
+
+<script>
+  var appId = "<%= app.objectId %>"
+  var object = <%- JSON.stringify(object) %>
+  function onCbValueChange(param){
+    var show = param.checked
+
+    var key = param.id
+    type = "admob"
+    content = '{'
+    var subKey = "undefined"
+    if(key === "admobIOSBannerShow" || key === "admobAndroidBannerShow")
+      subKey = "banner"
+    else if(key === "admobIOSInterstitialShow" || key === "admobAndroidInterstitialShow")
+      subKey = "interstitial"
+    else if(key === "admobIOSNativeShow" || key === "admobAndroidNativeShow")
+      subKey = "native"
+
+    var traverseObj = object.admobIOS
+    if(key === "admobIOSBannerShow" || key === "admobIOSInterstitialShow" || key === "admobIOSNativeShow"){
+      deviceType = "ios"
+    }else{
+      deviceType = "android"
+      traverseObj = object.admobAndroid
+    }
+    var notFound = true
+    for(k in traverseObj){
+        var showInner = false
+        if(k === subKey){
+          notFound = false
+          showInner = show
+        }else{
+          if(traverseObj[k].show)
+            showInner = traverseObj[k].show
+        }
+        var code = ''
+        if(traverseObj[k].code)
+          code = traverseObj[k].code
+        var deepContent = '{"code":"'+code+'","show":'+showInner+'}'
+        content += '"'+k+'":'+deepContent+','
+    }
+    if(notFound){
+      var deepContent = '{"code":"","show":'+show+'}'
+      content += '"'+subKey+'":'+deepContent
+    }
+    if (content.charAt(content.length - 1) == ',') {
+      content = content.substr(0, content.length - 1);
+    }
+    content += '}'
+    var params = {'content':content,'type':'admob','deviceType':deviceType}
+    finalSave(params) 
+  }
+  function checkFormData(){
+      var p = document.getElementById('error')
+      var key = document.getElementById('lblKey').innerHTML;
+      var value = (document.getElementById('inputValue').value).trim();
+      if(!value){
+          p.innerHTML = "Please enter the data"
+          return false;
+      }
+      p.innerHTML = ""
+
+      var type,deviceType = "ios";
+      var content = value;
+      if(key === "emailIOS"){
+        type = "email"
+      }else if(key === "emailAndroid"){
+        type = "email"
+        deviceType = "android"
+      }else if(key === "facebookIOS"){
+        type = "facebook"
+      }else if(key === "facebookAndroid"){
+        type = "facebook"
+        deviceType = "android"
+      }else{
+        type = "admob"
+        content = '{'
+        var subKey
+        if(key === "admobIOSBannerCode" || key === "admobAndroidBannerCode")
+          subKey = "banner"
+        else if(key === "admobIOSInterstitialCode" || key === "admobAndroidInterstitialCode")
+          subKey = "interstitial"
+        else if(key === "admobIOSNativeCode" || key === "admobAndroidNativeCode")
+          subKey = "native"
+        var traverseObj = object.admobIOS
+        if(key === "admobIOSBannerCode" || key === "admobIOSInterstitialCode" || key === "admobIOSNativeCode"){
+          deviceType = "ios"
+        }else{
+          deviceType = "android"
+          traverseObj = object.admobAndroid
+        }
+        var notFound = true
+        for(k in traverseObj){
+
+            var codeInner = ""
+            if(k === subKey){
+              notFound = false
+              codeInner = value
+            }else{
+              if(traverseObj[k].code)
+                codeInner = traverseObj[k].code
+            }
+            var show = false
+            if(traverseObj[k].show)
+              show = traverseObj[k].show
+            var deepContent = '{"code":"'+codeInner+'","show":'+show+'}'
+            content += '"'+k+'":'+deepContent+','
+        }
+        if(notFound){
+          var deepContent = '{"code":"'+value+'","show":true}'
+          content += '"'+subKey+'":'+deepContent
+        }
+        if (content.charAt(content.length - 1) == ',') {
+          content = content.substr(0, content.length - 1);
+        }
+        content += '}'
+      } 
+      var params = {'content':content,'type':type,'deviceType':deviceType}
+      finalSave(params)
+    }
+    function checkFormDataTerms(){
+      var p = document.getElementById('error')
+      var value = CKEDITOR.instances.inputValueTerms.getData()
+      // var value = (document.getElementById('inputValueTerms').value).trim();
+      if(!value){
+          p.innerHTML = "Please enter the data"
+          return false;
+      }
+      p.innerHTML = ""
+      var params = {'content':value,'type':'terms','deviceType':'ios'}
+      finalSave(params)
+    }
+    function finalSave(params){
+      params.appId = appId
+      var url = 'loadData?functionName=addStatic'
+      $('#loadingModal').modal('show');
+      $.post( url, params)
+        .done(function( results ) {
+          $('#sendSMS').modal('hide');
+          $('#termsModal').modal('hide');
+          $('#loadingModal').modal('hide');
+          $('#successModal').modal('show');
+          var timer = setInterval(function() { 
+              $('#successModal').modal('hide');
+              clearInterval(timer);
+              window.location = 'settings'
+          }, 1000);
+        }).fail(function(xhr, status, error){
+            $('#loadingModal').modal('hide');
+            alert(xhr.responseText)
+        });
+    }
+
+  $('#sendSMS').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var data = button.data('whatever') 
+    var userData = eval('(' + data + ')')
+    document.getElementById('lblKey').innerHTML = userData.key
+    document.getElementById('inputValue').value = userData.value
+    document.getElementById('error').innerHTML = ""
+  })
+  $('#termsModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var data = button.data('whatever') 
+    var userData = eval('(' + data + ')')
+    document.getElementById('lblKeyTerms').innerHTML = userData.key
+    document.getElementById('inputValueTerms').innerHTML = decodeURIComponent(userData.value)
+    document.getElementById('error').innerHTML = ""
+    if(!CKEDITOR.instances.inputValueTerms)
+      CKEDITOR.replace('inputValueTerms');
+  })
+</script>

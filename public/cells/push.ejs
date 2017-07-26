@@ -1,0 +1,183 @@
+<div class="col-lg-4" id="divLeft">
+</div>
+<div class="col-lg-4" id="divCentre">
+</div>
+<div class="col-lg-4" id="divRight">
+</div> 
+
+<% for (var i = 0; i < results.length; i++) { 
+  var item = results[i];
+
+  var type = item.type
+  var media = undefined
+  if(item.media && item.media.url)
+    media = item.media.url
+  var str = objectToString(item)
+  -%>
+  <script type="text/javascript">
+    var postId = "<%= item.objectId %>"
+    var title = "<%= item.title %>"
+    var views = "<%= item.views%>"
+    var categoryName = "<%= item.type%>"
+    var route = "<%= item.route%>"
+    if(route === "launch")
+      route = "IAM"
+    var status = "<%= item.status%>"
+    var opened = "<%= item.opened%>"
+    var cancelled = "<%= item.cancelled%>"
+    var publishedAgo = "<%= item.createdAgo %>"
+    var platform = "<%= item.deviceType %>"
+    var link = "<%= item.link %>"
+    var url = "#"
+    if(link){
+      if(categoryName === "web" || categoryName === "general"){
+        url = link
+      }else if(categoryName === "app" || categoryName === "permanent"){
+        if(platform === "ios")
+          url = "https://itunes.apple.com/us/app/"+link
+        else if(platform === "android")
+          url = "https://play.google.com/store/apps/details?id="+link
+      }else if(categoryName === "facebookAd"){
+        url = "https://facebook.com/"+link
+      }
+    }
+    
+    var html = '<div class="info-box" style="padding: 5px 10px; float: left;" id="rootDiv_'+postId+'">'+
+          '<div class="timeline-item">'+
+              '<span class="timeline-header"><a href="'+url+'" target="blank">'+title+'</a></span>'+
+          '</div>'+
+          '<div class="category_details" style="font-size: 16px; color:#999;">'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px"> Status : <strong>'+ status+'</strong></span>'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px">'+
+                "Route : <strong>"+route+"</strong>"+
+              '</span>'+
+              '<span class="users-list-date">'+
+                "Type : <strong>"+categoryName+"</strong>"+
+              '</span>'+
+          '</div>'+
+          '<div class="category_details" style="margin-bottom: 10px;margin-top:5px; font-size: 16px; color:#999;">'+
+              '<span class="users-list-date pull-right"> <strong>'+ cancelled+'</strong> Cancelled</span>'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px"> <strong>'+ opened+'</strong> Opened</span>'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px"> <strong>'+ views+'</strong> Views</span>'+
+              '<span class="users-list-date pull-right" style="margin-right: 10px"><strong>'+ platform+'</strong></span>'+
+              '<span class="users-list-date">'+ publishedAgo+'</span>'+
+          '</div>'+
+          '<div class="timeline-body">';
+                <% if (media) {  -%>
+                    html += '<img data-toggle="modal" data-whatever='+"<%= media %>"+' data-target="#imageModal" class="img img-responsive full-width" src="'+"<%= media %>"+'">';
+                <% } else{  -%>
+                    html += '<span class="timeline-header">'+"<%= item.description %>"+'</span>';
+                <% } -%>
+              
+          html += '</div>'+
+          '<div  style="margin:10px 0 5px 0;text-align: center;">';
+                  if(route === "IAM")
+                     html+= '<button onclick="editAction('+"<%= str %>"+')" type="button" style="padding:0px 5px;" class="btn btn-primary ">Edit</button>';
+                   html+= '<button data-toggle="modal" data-whatever="'+"<%= str %>"+'" data-target="#deleteAction" type="button" style="padding:0px 5px;margin-left:10px" class="btn btn-danger">Delete</button>'+
+             '</div>'+
+      '</div>';
+      <% if (i%3 === 0) { -%>
+          $('#divLeft').append(html);
+      <% } else if (i%3 === 1){ -%>
+          $('#divCentre').append(html);
+      <% } else { -%>
+          $('#divRight').append(html);
+      <% } -%>
+
+  </script>
+    
+<% } -%>
+
+<!-- Confirmaion -->
+<div class="modal fade" style = "padding-top:15%" id="deleteAction" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-footer">
+          <label hidden="true" id="lblObjectId"></label>
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="deleteAction()" id="btnSend">Delete</button>
+        </div>
+      </div>
+  </div>
+</div>
+
+<div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="padding-top: 10px">
+    <div class="modal-content" style="padding: 5px;border-radius: 5px;width: 100%;margin: 0 auto;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <img id="imageModalImg" src="" class="img-responsive">
+    </div>
+  </div>
+</div>
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+<link rel="stylesheet" href="../lte/plugins/iCheck/square/blue.css">
+<script src="../lte/plugins/iCheck/icheck.min.js"></script>
+<script type="text/javascript">
+
+  
+  // jquery extend function
+$.extend(
+{
+    redirectPost: function(location, args)
+    {
+        var form = $('<form></form>');
+        form.attr("method", "post");
+        form.attr("action", location);
+        var field = $('<input></input>');
+        field.attr("type", "hidden");
+        field.attr("name", "data");
+        field.attr("value", args);
+        form.append(field);
+        $(form).appendTo('body').submit();
+    }
+});
+  
+  function editAction(params){
+      var params = objectToString(params)
+      $.redirectPost("edit_push", params);
+    }
+  
+  function deleteAction(){
+      var objectId = (document.getElementById('lblObjectId').innerHTML).trim();
+      var url = 'loadData?functionName=deletePush'
+      var params = {'objectId':objectId}
+      $('#loadingModal').modal('show');
+      $.post( url, params)
+          .done(function( results ) {
+            $('#deleteAction').modal('hide');
+            $('#loadingModal').modal('hide');
+            var elem = document.getElementById('rootDiv_'+objectId);
+            elem.parentNode.removeChild(elem);            
+          }).fail(function(xhr, status, error){
+              $('#loadingModal').modal('hide');
+              alert(xhr.responseText)
+          });
+    }
+  $(function () {
+      
+    });
+  $('#imageModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever')
+    var modal = $(this)
+    var output = document.getElementById('imageModalImg');
+    output.src = data
+  })
+  $('#deleteAction').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var data = button.data('whatever') 
+    data = decodeObject(data) 
+    var modal = $(this)
+    modal.find('.modal-title').text('Delete ' + data.title+' ?')
+    document.getElementById('lblObjectId').innerHTML = data.objectId
+  })
+</script>

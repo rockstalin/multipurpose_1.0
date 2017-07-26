@@ -1,0 +1,435 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+<div class="content-wrapper">
+  <section class="content">
+  <div class="row">
+    <div class="col-md-6">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Update Push</h3>
+            </div>
+          <!-- /.box -->
+          <form role="form" class="form-horizontal">
+          <% var object = JSON.parse(object.data)
+              object = decodeObject(object)
+              function decodeObject (obj) {for (var key in obj) {if (obj.hasOwnProperty(key)) {if(typeof obj[key] == 'object'){if(obj[key] instanceof Array){for(var j=0;j<obj[key].length;j++){if(typeof obj[key][j]=='object') {obj[key][j] = decodeObject(obj[key][j])}else{obj[key][j]=  decodeURIComponent(decodeURIComponent(obj[key][j]))}}}else{obj[key] = decodeObject(obj[key]);}}else {obj[key] = decodeURIComponent(decodeURIComponent(obj[key]))}}}return obj;}
+           %>
+              <div class="box-body">
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Type :</label>
+                    <div class="col-sm-8">
+                      <select onchange="onCategoryChange()" id="categoryId" name="categoryId" class="form-control">
+                        <% for (var i = 0; i < categories.length; i++) { -%>
+                          <% if ( categories[i] === object.type) { -%>
+                            <option selected="selected" value=<%= categories[i] %> ><%= categories[i] %></option>
+                          <% } else { -%>
+                            <option value=<%= categories[i] %> ><%= categories[i] %></option>
+                          <% } -%>
+                          
+                        <% } -%>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Title : </label>
+                    <div class="col-sm-8">
+                      <input type="text" placeholder="Title" id="title" class="form-control" value="<%= object.title %>">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label">Description :</label>
+                    <div class="col-sm-8">
+                      <textarea placeholder="Enter ..." rows="3" class="form-control" id="description"><%= object.content %></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-4 control-label" id="lbl_link">
+                      <%
+                       var placeholderText = "Link with or without http://"
+                       if (object.type === "facebookAd") { 
+                          placeholderText = "Enter Facebook PageId"
+                        -%>
+                          Facebook PageId
+                      <% }else if (object.type === "app" || object.type === "permanent") { 
+                          placeholderText = "Enter App/Play Store id"
+                        -%>
+                            App/play Store Id
+                      <% } else { -%>
+                            Link : http://
+                      <% } -%>
+                      </label>
+                      <div class="col-sm-8">
+                        <input type="text" placeholder="<%= placeholderText %>" id="link" class="form-control" value="<%= object.link %>">
+                      </div>
+                    </div>
+                  
+                  <div class="form-group">
+                      <div class="col-sm-4">
+                        <input onchange="loadFile(event)" accept="image/*" type="file" style="display:none;" id="file" name="file"/>
+                      </div>
+                      <div class="col-sm-6">
+                            <% if (object.media && object.media.url) { %>  
+                                  <img src="<%= object.media.url %>" class="img-thumbnail" id="image" width="100px" height="100px">  
+                            <% }else{ %>
+                                  <img style="display: none" class="img-thumbnail" id="image" width="100px" height="100px">
+                            <% } %>
+                          <button id="btnAddMedia" class="btn btn-primary btn-sm btn-success" type="button" style="padding:0px 5px;" onclick="document.getElementById('file').click();">Add Media</button>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label" style="padding-top: 0px">Platform:</label>
+                    <div class="col-sm-8">
+                      <% if (object.deviceType === "android") { -%>
+                            <input type="checkbox" id = "cbBoth" onchange="onCbBothChange()">
+                            <label id="lblBoth" style="font-weight: normal;">Both</label>
+                            <input style="margin-left: 12px" type="checkbox" id = "cbAndroid" onchange="onCbAndroidChange()" checked=""> 
+                            <label id="lblAndroid" style="font-weight: normal;color: inherit;">Android</label>
+                            <input style="margin-left: 12px" type="checkbox" id = "cbIOS"  onchange="onCbIOSChange()"> 
+                            <label id="lblIos" style="font-weight: normal;color: inherit;">iOS</label>
+                      <% }else if (object.deviceType === "ios") { -%>
+                            <input type="checkbox" id = "cbBoth" onchange="onCbBothChange()">
+                            <label id="lblBoth" style="font-weight: normal;">Both</label>
+                            <input style="margin-left: 12px" type="checkbox" id = "cbAndroid"  onchange="onCbAndroidChange()"> 
+                            <label id="lblAndroid" style="font-weight: normal;color: inherit;">Android</label>
+                            <input style="margin-left: 12px" type="checkbox" id = "cbIOS"  onchange="onCbIOSChange()" checked="" > 
+                            <label id="lblIos" style="font-weight: normal;color: inherit;">iOS</label>
+                      <% } else { -%>
+                            <input type="checkbox" id = "cbBoth" onchange="onCbBothChange()" checked="">
+                            <label id="lblBoth" style="font-weight: normal;">Both</label>
+                            <input style="margin-left: 12px" type="checkbox" id = "cbAndroid"  onchange="onCbAndroidChange()" checked="" disabled=""> 
+                            <label id="lblAndroid" style="font-weight: normal;color: #aaa">Android</label>
+                            <input style="margin-left: 12px" type="checkbox" id = "cbIOS"  onchange="onCbIOSChange()" checked="" disabled="true"> 
+                            <label id="lblIos" style="font-weight: normal;color: #aaa">iOS</label>
+                      <% } -%>
+                    </div>
+                  </div> 
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label" style="padding-top: 0px">Route:</label>
+                    <div class="col-sm-8">
+                      <% if (object.route === "both") { -%>
+                        <input type="checkbox" id = "cbPush" checked=""> Push
+                        <label style="margin-left: 12px"></label>
+                        <input type="checkbox" id = "cbLaunch" checked=""> InAppMessage
+                      <% } else if(object.route === "push"){ -%>
+                        <input type="checkbox" id = "cbPush" checked=""> Push
+                        <label style="margin-left: 12px"></label>
+                        <input type="checkbox" id = "cbLaunch"> InAppMessage
+                      <% } else if(object.route === "launch"){ -%>
+                        <input type="checkbox" id = "cbPush"> Push
+                        <label style="margin-left: 12px"></label>
+                        <input type="checkbox" id = "cbLaunch" checked=""> InAppMessage  
+                      <% } -%>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-4 control-label" style="padding-top: 0px">Other:</label>
+                    <div class="col-sm-8">
+                      <% if (object.status === "active") { -%>
+                        <input type="checkbox" id = "cbActive" checked="true"> Active  
+                      <% } else { -%>
+                        <input type="checkbox" id = "cbActive"> Active
+                      <% } -%>
+                      <label style="margin-left: 5px"></label>
+                      <input type="checkbox" id = "cbAllApps"> All Apps(only for route : push)
+                    </div>
+                  </div> 
+                  <label style="color:red; width: 100%;text-align: center;height: 30px" id="error">&nbsp;</label>
+              </div>
+              <div class="box-footer">
+                <button class="btn btn-primary btn-lg btn-block btn-success" onclick="addPost()" type="button">Update Push</button>
+              </div>
+            </form>
+            </div>
+    </div>
+    </div>
+    <!-- /.row -->
+  </section>
+
+  <!-- Confirmaion -->
+  <div class="modal fade" style = "padding-top:15%" id="confirmaionModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Image should be 400x400 !</h4>
+          </div>
+          <div class="modal-footer">
+            <label hidden="true" id="lblCategoryId"></label>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="uploadImage()" id="btnSend">Continue</button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Small modal -->
+  <div class="modal fade" style = "padding-top:15%" id="successModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header" style="border-radius: 5px">
+            <h4 class="modal-title">Push Updated</h4>
+          </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Loading modal -->
+  <div class="modal fade" style = "padding-top:15%" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-content" style="padding:10px;width: 50px;margin: 0 auto;border-radius: 5px">
+            <div class="fa fa-spinner fa-spin text-light-blue" style="font-size: 30px;"></div>
+      </div>
+  </div>
+
+</div>
+<!-- /.content-wrapper -->
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+
+
+
+<script>
+
+  var object = <%- JSON.stringify(object) %>
+  var categoryId = object.type
+  var link,title,description;
+  var file,fileName,deviceType;
+  
+  var width = 0;
+  var height = 0;
+
+  var loadFile = function(event) {
+    if(event.target.files[0]){
+      file = event.target.files[0]
+      $("#image").show();
+      var output = document.getElementById('image');
+      var img;
+      img = new Image();
+      img.onload = function () {
+        width = this.width;
+        height  = this.height
+      };
+      img.src = URL.createObjectURL(file);
+      output.src = URL.createObjectURL(file);
+    }
+  };
+  function onCategoryChange(){
+    var dd = document.getElementById("categoryId")
+    var lbl_link = document.getElementById("lbl_link")
+    var link = document.getElementById("link")
+    var cbBoth = document.getElementById("cbBoth")
+    var lblBoth = document.getElementById("lblBoth")
+
+    cbBoth.disabled = false
+    lblBoth.style.color = "inherit"
+
+    categoryId = dd.options[dd.selectedIndex].value;
+    if(categoryId === "web" || categoryId === "general"){
+      lbl_link.innerHTML = "Link : http://"
+      link.placeholder = "Link with or without http://"
+    }else if(categoryId === "app" || categoryId === "permanent"){
+      cbBoth.checked = false
+      cbBoth.disabled = true
+      lblBoth.style.color = "#aaa"
+      lbl_link.innerHTML = "App/play Store Id"
+      link.placeholder = "Enter App/Play Store id"
+    }else if(categoryId === "facebookAd"){
+      lbl_link.innerHTML = "Facebook PageId"
+      link.placeholder = "Enter Facebook PageId"
+    }
+  }
+  function onCbBothChange(){
+    var p = document.getElementById('error')
+    p.innerHTML = "&nbsp;"
+    var cbBoth = document.getElementById("cbBoth")
+    var lblBoth = document.getElementById("lblBoth")
+
+    var cbIOS = document.getElementById("cbIOS")
+    var lblIos = document.getElementById("lblIos")
+
+    var cbAndroid = document.getElementById("cbAndroid")
+    var lblAndroid = document.getElementById("lblAndroid")
+    
+    
+    if(cbBoth.checked){
+      cbIOS.checked = true
+      cbIOS.disabled = true
+      lblIos.style.color = "#aaa"
+
+      cbAndroid.checked = true
+      cbAndroid.disabled = true
+      lblAndroid.style.color = "#aaa"
+    }else {
+      cbIOS.checked = false
+      cbIOS.disabled = false
+      lblIos.style.color = "inherit"
+
+      cbAndroid.checked = false
+      cbAndroid.disabled = false
+      lblAndroid.style.color = "inherit"
+    }
+  }
+  function onCbIOSChange(){
+    var p = document.getElementById('error')
+    p.innerHTML = "&nbsp;"
+    var cbIOS = document.getElementById("cbIOS")
+    var cbAndroid = document.getElementById("cbAndroid")
+    if(cbIOS.checked && cbAndroid.checked){
+      cbIOS.checked = false
+      p.innerHTML = "Please uncheck Platform Android"
+    }
+  }
+  function onCbAndroidChange(){
+    var p = document.getElementById('error')
+    p.innerHTML = "&nbsp;"
+    var cbIOS = document.getElementById("cbIOS")
+    var cbAndroid = document.getElementById("cbAndroid")
+    if(cbIOS.checked && cbAndroid.checked){
+      cbAndroid.checked = false
+      p.innerHTML = "Please uncheck Platform iOS"
+    }
+  }
+  
+  function addPost(){
+    var p = document.getElementById('error')
+    title = (document.getElementById('title').value).trim();
+    description = (document.getElementById('description').value).trim();
+    link = (document.getElementById('link').value).trim();
+    
+    var cbBoth = document.getElementById("cbBoth")
+    var cbIOS = document.getElementById("cbIOS")
+    var cbAndroid = document.getElementById("cbAndroid")
+    
+    if(!title){
+        p.innerHTML = "Please enter title"
+        return false;
+    }else if(!description){
+        p.innerHTML = "Please enter description"
+        return false;
+    }else if(!(categoryId === "general") && !link){
+        p.innerHTML = "Please enter the link"
+        if(categoryId === "app" || categoryId === "permanent"){
+          p.innerHTML = "Please enter the App/Play Store Id"  
+        }else if(categoryId === "facebookAd"){
+          p.innerHTML = "Please enter the Facebook Page Id"
+        }
+        return false;
+    }else if(!cbBoth.checked && !cbIOS.checked && !cbAndroid.checked){
+        p.innerHTML = "Please select at least one Platform"
+        return false;
+    }else if(!document.getElementById('cbPush').checked && !document.getElementById('cbLaunch').checked) {
+      p.innerHTML = "Please select at least one route"
+      return false;   
+    }
+    deviceType = "both";
+    if(cbIOS.checked && !cbAndroid.checked){
+      deviceType = "ios"
+    }else if(cbAndroid.checked && !cbIOS.checked){
+      deviceType = "android"
+    }
+    p.innerHTML = "&nbsp;"
+    if(file && ((width === 400 && height === 400) || (width === 0 && height === 0))){
+      uploadImage()
+    }else{
+      if(file)
+        $('#confirmaionModal').modal('show');
+      else{
+        finalAddPost()
+      }
+    }
+  }
+  function uploadImage(){
+    $('#loadingModal').modal('show');
+      var url = "upload"+"/push_image.jpg"
+      $.ajax({
+         url: url,
+         type: "POST",
+         data: file,
+         processData: false,
+         contentType: "admin/file"
+        }).done(function( data ) {
+            fileName = data.name
+            finalAddPost()
+        }).fail(function(xhr, status, error){
+            $('#loadingModal').modal('hide');
+            alert(xhr.responseText)
+        });
+  }
+  function finalAddPost(){
+      if(document.getElementById('cbActive').checked) {
+        var status = "active"
+      }
+      else{
+        var status = "inactive"
+      }
+      if(document.getElementById('cbAllApps').checked) {
+        var allApp = 1
+      }
+      else{
+        var allApp = 0
+      }
+      var route
+      if(document.getElementById('cbPush').checked && document.getElementById('cbLaunch').checked) {
+        route = "both"
+      }else if(document.getElementById('cbPush').checked){
+        route = "push"
+      }else if(document.getElementById('cbLaunch').checked){
+        route = "launch"
+      }
+
+      var url = 'loadData?functionName=updatePush'
+      var params = {'objectId':object.objectId,'allApp':allApp}
+
+      if(categoryId && !(categoryId === object.type))
+        params.type = categoryId
+      if(!(title === object.title))
+        params.title = title
+      if(!(description === object.content))
+        params.content = description
+      if(!(status === object.status))
+        params.status = status
+      if(!(route === object.route))
+        params.route = route
+      if(!(route === object.route))
+        params.route = route
+      if(!(deviceType === object.deviceType))
+        params.deviceType = deviceType
+      if(fileName){
+        params.fileName = fileName
+      }
+      if(link){
+          if(link.lastIndexOf("http", 0) === 0){
+          }
+          else if(params.type === "web" || params.type === "general"){
+              link = "http://"+link
+          }
+      }
+      if(link && !(link === object.link)){
+        params.link = link
+      }
+      $('#confirmaionModal').modal('hide');
+      $.post( url, params)
+      .done(function( results ) {
+        $('#successModal').modal('show');
+        $('#loadingModal').modal('hide');
+        var timer = setInterval(function() { 
+            $('#successModal').modal('hide');
+            clearInterval(timer);
+            window.location.href = 'push_list'
+        }, 1000);
+      }).fail(function(xhr, status, error){
+          $('#loadingModal').modal('hide');
+          alert(xhr.responseText)
+      });
+  }
+  $(function () {
+    
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+
+
+</script>

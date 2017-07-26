@@ -1,0 +1,235 @@
+<% include ./common/head %>
+<% include ./common/header %>
+<% include ./common/sidebar %>
+<div class="content-wrapper">
+  <section class="content">
+
+    <div class="col-md-4">
+          <!-- general form elements -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Add Admin</h3>
+            </div>
+              <div class="box-body">
+                <div class="info-box-icon col-sm-4" style="padding:4px 6px;">
+                  <i class="fa fa-image" id="placeholderImage" style="margin-top:-14px"></i> 
+                  <img src="" class="img-circle" id="image" style="margin-top:-14px">  
+                </div>
+                <div class="col-sm-8" style="padding-top: 0px;padding-left: 20px ;">
+                    <span class="row" style="margin: 0px">
+                        <label><input type="checkbox" onchange="onSuperAdminChange()" id="cbSuperAdmin"> Super Admin</label>
+                    </span>
+                    <span class="row" style="margin: 0px">
+                        <label><input type="checkbox" onchange="onAdminChange()" id="cbAdmin"> Admin</label>
+                    </span>
+                    <span class="row" style="margin: 0px">
+                        <label><input type="checkbox" id="cbEditor"> Editor</label>
+                    </span>
+                    <span class="row" style="margin: 0px">
+                        <label><input type="checkbox" id="cbAds"> Ads</label>
+                    </span>
+                </div>
+                <input onchange="loadFile(event)" style="padding:5px" id="file-input" type="file" accept="image/*"/>
+                <div class="form-group" style="margin-top: 20px">
+                  <input type="text" placeholder="Name" id="username" class="form-control">
+                  <span style="padding: 10px; text-align: center;" class="col-sm-12">
+                    <label id="lblUserNameAvailable" style="color:red"></label>
+                    <button class="btn btn-success btn-xs" onclick="checkAvailability()" >Check Availability</button>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <input type="password" placeholder="password" id="password" class="form-control">
+                </div>
+                <div class="form-group">
+                  <input type="text" placeholder="Full name" id="fullName" class="form-control">
+                </div>
+                <div class="form-group">
+                  <input type="number" placeholder="Phone number with country code (optional)" id="phone" class="form-control">
+                </div>
+                <label style="color:red" id="error"></label>
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button class="btn btn-primary btn-lg btn-block" onclick="addAdmin()" >Add</button>
+              </div>
+          </div>
+          <!-- /.box -->
+        </div>
+  </section>
+
+  <!-- Confirmaion -->
+  <div class="modal fade" style = "padding-top:15%" id="confirmaionModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Image should be 400x400 !</h4>
+          </div>
+          <div class="modal-footer">
+            <label hidden="true" id="lblCategoryId"></label>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="uploadImage()" id="btnSend">Continue</button>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Small modal -->
+  <div class="modal fade" style = "padding-top:15%" id="successModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Admin Added</h4>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<!-- /.content-wrapper -->
+  
+<% include ./common/footer %>
+<% include ./common/footer_js %>
+
+<script>
+
+function onSuperAdminChange(){
+    if(document.getElementById('cbSuperAdmin').checked) {
+      document.getElementById('cbAdmin').disabled = true
+      document.getElementById('cbAdmin').checked = true
+      document.getElementById('cbAdmin').style.color = "#eee"
+      document.getElementById('cbEditor').disabled = true
+      document.getElementById('cbEditor').checked = true
+      document.getElementById('cbEditor').style.color = "#eee"
+    }else{
+      document.getElementById('cbAdmin').disabled = false
+      document.getElementById('cbAdmin').style.color = "inherit"
+    }
+  }
+  function onAdminChange(){
+    if(document.getElementById('cbAdmin').checked) {
+      document.getElementById('cbEditor').disabled = true
+      document.getElementById('cbEditor').checked = true
+      document.getElementById('cbEditor').style.color = "#eee"
+    }
+    else{
+      document.getElementById('cbEditor').disabled = false
+      document.getElementById('cbEditor').style.color = "inherit"
+    }
+  }
+
+  var sessionObjectId = "<%= sessionObjectId %>"
+  var name,fullName,password,phone,cbSuperAdmin,cbAdmin,cbEditor,cbAds;
+  var file = undefined;
+  var width = 0;
+  var height = 0;
+  var loadFile = function(event) {
+    file = event.target.files[0]
+    var pli = document.getElementById("placeholderImage")
+    pli.style.display = "none"
+    var output = document.getElementById('image');
+    output.src = URL.createObjectURL(file);
+    var img;
+    img = new Image();
+    img.onload = function () {
+      width = this.width;
+      height  = this.height
+    };
+    img.src = URL.createObjectURL(file);
+  };
+  function checkAvailability(){
+    var lblError = document.getElementById('lblUserNameAvailable')
+    name = (document.getElementById('username').value).trim();
+    if(!name){
+        lblError.innerHTML = "Please enter name"
+        return false;
+    }
+    var url = 'loadData?functionName=checkUserName'
+    var params = {'username':name}
+    $('#loadingModal').modal('show');
+    $.post( url, params)
+    .done(function( results ) {
+      $('#loadingModal').modal('hide');
+      lblError.innerHTML = "Available"
+    }).fail(function(xhr, status, error){
+        $('#loadingModal').modal('hide');
+        lblError.innerHTML = "Not Available"
+    });
+
+  }
+  function addAdmin(){
+    var p = document.getElementById('error')
+    name = (document.getElementById('username').value).trim();
+    password = (document.getElementById('password').value).trim();
+    fullName = (document.getElementById('fullName').value).trim();
+    phone = (document.getElementById('phone').value).trim();
+    cbSuperAdmin = document.getElementById('cbSuperAdmin').checked
+    cbAdmin = document.getElementById('cbAdmin').checked
+    cbEditor = document.getElementById('cbEditor').checked
+    cbAds = document.getElementById('cbAds').checked
+
+    if(!name){
+        p.innerHTML = "Please enter name"
+        return false;
+    }else if(!password){
+        p.innerHTML = "Please enter password"
+        return false;
+    }else if(!fullName){
+        p.innerHTML = "Please enter fullName"
+        return false;
+    }
+    p.innerHTML = ""
+    if((width === 400 && height === 400) || !file){
+      uploadImage()
+    }else{
+      $('#confirmaionModal').modal('show');
+    }
+  }
+  function uploadImage(){
+    if(file){
+      var url = "upload"+"/user.jpg"
+      $.ajax({
+         url: url,
+         type: "POST",
+         data: file,
+         processData: false,
+         contentType: "admin/file",
+        }).done(function( data ) {
+            finalAddAdmin(data.name)
+        }).fail(function(xhr, status, error){
+            alert(xhr.responseText)
+        }); 
+      }else{
+        finalAddAdmin(undefined)
+      }
+  }
+  function finalAddAdmin(fileName){
+      var url = 'loadData?functionName=addAdmin'
+      var params = {'superAdminId':sessionObjectId,'username':name,'fullName':fullName,'password':password,'superAdminAccess':cbSuperAdmin,'adminAccess':cbAdmin,'editorAccess':cbEditor,'ads':cbAds}
+      if(fileName){
+        params.fileName= fileName
+      }
+      if(phone){
+        params.phone= phone
+      }
+      $.post( url, params)
+      .done(function( results ) {
+        console.log(results)
+        $('#successModal').modal('show');
+        $('#confirmaionModal').modal('hide');
+        var timer = setInterval(function() { 
+            $('#successModal').modal('hide');
+            clearInterval(timer);
+            window.location.href = 'admin_list'
+        }, 1000);
+      }).fail(function(xhr, status, error){
+          alert(xhr.responseText)
+      });
+  }
+  $(function () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+      // prevent virtual keyboard 
+    }else{
+      $(".select2").select2();
+    }
+  });
+</script>
