@@ -6,11 +6,12 @@ var path = require('path');
  >>>>>>>>>>>>>>>>>>>>>>>>
 */
 
-exports.PORT = 80; // Port number on which your project will be running
+exports.PORT = 3030;//80; // Port number on which your project will be running
 //you may use port like 3030, 2020 etc if you don't want to use the default port 80 and you want to point your subdomain to this this port
 // for more information refer to advanced documentation of server confifuration inside documenatation > advanced_user
+exports.BASE_URL = 'http://localhost:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
 
-exports.BASE_URL = 'http://174.138.68.69:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
+//exports.BASE_URL = 'http://174.138.68.69:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
 exports.CMS_USER = "cms" 
 exports.CMS_PASSWORD = "myPassword" 
 // User name and password which will be used to access the Parse Dashboard, i.e. access to the Architecture of Database
