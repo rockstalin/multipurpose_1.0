@@ -22,6 +22,10 @@ var _ParseGeoPoint = require('./ParseGeoPoint');
 
 var _ParseGeoPoint2 = _interopRequireDefault(_ParseGeoPoint);
 
+var _ParsePolygon = require('./ParsePolygon');
+
+var _ParsePolygon2 = _interopRequireDefault(_ParsePolygon);
+
 var _ParseObject = require('./ParseObject');
 
 var _ParseObject2 = _interopRequireDefault(_ParseObject);
@@ -35,17 +39,6 @@ var _ParseRelation2 = _interopRequireDefault(_ParseRelation);
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : { default: obj };
 }
-
-/**
- * Copyright (c) 2015-present, Parse, LLC.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
 
 function decode(value) {
   if (value === null || (typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value)) !== 'object') {
@@ -85,9 +78,21 @@ function decode(value) {
       longitude: value.longitude
     });
   }
+  if (value.__type === 'Polygon') {
+    return new _ParsePolygon2.default(value.coordinates);
+  }
   var copy = {};
   for (var k in value) {
     copy[k] = decode(value[k]);
   }
   return copy;
-}
+} /**
+   * Copyright (c) 2015-present, Parse, LLC.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * 
+   */

@@ -3,9 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 exports.numberParser = numberParser;
 exports.numberOrBoolParser = numberOrBoolParser;
 exports.objectParser = objectParser;
@@ -15,9 +12,9 @@ exports.booleanParser = booleanParser;
 exports.nullParser = nullParser;
 function numberParser(key) {
   return function (opt) {
-    var intOpt = parseInt(opt);
+    const intOpt = parseInt(opt);
     if (!Number.isInteger(intOpt)) {
-      throw new Error('Key ' + key + ' has invalid value ' + opt);
+      throw new Error(`Key ${key} has invalid value ${opt}`);
     }
     return intOpt;
   };
@@ -39,7 +36,7 @@ function numberOrBoolParser(key) {
 }
 
 function objectParser(opt) {
-  if ((typeof opt === 'undefined' ? 'undefined' : _typeof(opt)) == 'object') {
+  if (typeof opt == 'object') {
     return opt;
   }
   return JSON.parse(opt);
@@ -51,12 +48,12 @@ function arrayParser(opt) {
   } else if (typeof opt === 'string') {
     return opt.split(',');
   } else {
-    throw new Error(opt + ' should be a comma separated string or an array');
+    throw new Error(`${opt} should be a comma separated string or an array`);
   }
 }
 
 function moduleOrObjectParser(opt) {
-  if ((typeof opt === 'undefined' ? 'undefined' : _typeof(opt)) == 'object') {
+  if (typeof opt == 'object') {
     return opt;
   }
   try {
