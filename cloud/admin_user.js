@@ -4,6 +4,8 @@ var fs = require('fs');
 var path = require('path');
 
 Parse.Cloud.define("addDefaultAdmin", function(request, response) {
+
+
     var fullName = cons.SUPER_ADMIN_FULL_NAME
     var username = cons.SUPER_ADMIN_USER
     var password = cons.SUPER_ADMIN_PASSWORD

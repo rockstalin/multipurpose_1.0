@@ -1,3 +1,4 @@
+
 var express = require('express');
 var cookieSession = require('cookie-session')
 var slashes = require("connect-slashes");
@@ -30,6 +31,9 @@ if(iosPushArray.length>0){
     push.ios = iosPushArray[0]
   }
 }
+
+
+
 
 var api = new ParseServer({
   databaseURI: cons.DATABASE_URI,
@@ -114,7 +118,17 @@ var config = {
 var dashboard = new ParseDashboard(config,config.allowInsecureHTTP);
 app.use(cons.CMS_ROUTE, dashboard);
 
+
 var httpServer = require('http').createServer(app);
+
 httpServer.listen(cons.PORT, function() {
     Parse.Cloud.run("addDefaultAdmin", {}).then(function(results) {})
 });
+
+
+
+
+
+
+
+

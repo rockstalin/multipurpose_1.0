@@ -9,15 +9,16 @@ var path = require('path');
 exports.PORT = 3030;//80; // Port number on which your project will be running
 //you may use port like 3030, 2020 etc if you don't want to use the default port 80 and you want to point your subdomain to this this port
 // for more information refer to advanced documentation of server confifuration inside documenatation > advanced_user
-exports.BASE_URL = 'http://localhost:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
 
-//exports.BASE_URL = 'http://174.138.68.69:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
+//exports.BASE_URL = 'http://localhost:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
+
+exports.BASE_URL = 'https://3.135.95.42:'+this.PORT // Base Url or IP Address which you will be using to connect with Android/iOS/Web Application
 exports.CMS_USER = "cms" 
 exports.CMS_PASSWORD = "myPassword" 
 // User name and password which will be used to access the Parse Dashboard, i.e. access to the Architecture of Database
 // to open parse dashboard you can visit BASE_URL+/cms/apps for example http://174.138.68.69/cms/apps
 
-exports.SUPER_ADMIN_FULL_NAME = "Bison Code" 
+exports.SUPER_ADMIN_FULL_NAME = "Church Name" 
 exports.SUPER_ADMIN_USER = "admin"
 exports.SUPER_ADMIN_PASSWORD = "myPassword" // User name and password which will be used to access the Admin Panel
 
@@ -44,8 +45,8 @@ exports.PM_ID = 0
  >>>>>>>>>>>>>>>>>>>>>>>>
 */
 
-exports.DEVELOPER_NAME_BOLD = 'Your';
-exports.DEVELOPER_NAME_THIN = 'Name';  // These Names will be shown in Admin/Editor Panel as Logo Of Panel
+exports.DEVELOPER_NAME_BOLD = 'Connect Church';
+exports.DEVELOPER_NAME_THIN = 'Church App';  // These Names will be shown in Admin/Editor Panel as Logo Of Panel
 
 exports.APP_NAME = 'Multipurpose'; // This Name will be shown in Parse Dashboard
 exports.DATABASE_NAME = 'multipurpose'; // Database will be created/used in MongoDB with this name
@@ -55,11 +56,12 @@ exports.SEND_POST_PUSH_TO_ALL = true
 // otherwise push will be sent to the users who has subscribed the category(post's category) + users who has not logged into app, But not to those users who has signed in to the app but no subscribed the category
 
 //plivo.com configurations
-exports.SMS_AUTH_ID = "" // Plivo SMS Auth ID to send the SMS using plivo.com
-exports.SMS_AUTH_TOKEN = "" // Plivo SMS Auth Token to send the SMS using plivo.com
-exports.SMS_SRC = "" // Plivo SMS Number, SMS will be sent using this Number.
+exports.SMS_AUTH_ID = "MAYZY1N2ZKYWFLZDY0ZG" // Plivo SMS Auth ID to send the SMS using plivo.com
+exports.SMS_AUTH_TOKEN = "MWNhZmYzYWI4NWFjMDQ1ZjJlZTFiNjc3N2JmM2Rh" // Plivo SMS Auth Token to send the SMS using plivo.com
+exports.SMS_SRC = "919884858395" // Plivo SMS Number, SMS will be sent using this Number.
 
-exports.GOOGLE_YOUTUBE_KEY = '' // This is used to consume the API's of Youtube Data API v3, You can create new one at Google Api Console
+
+exports.GOOGLE_YOUTUBE_KEY = 'AIzaSyBLZUi7bVk6UgGkzc9zsPVo896qjQToeM4' // This is used to consume the API's of Youtube Data API v3, You can create new one at Google Api Console
 // To create the new key Visit https://console.developers.google.com/
 //	> Enable Api > YouTube Data API > 
 //	> Credentials from Left menu > Create Credentials > API key > copy and paste

@@ -252,15 +252,15 @@ Parse.Cloud.define("fetchYoutubeVideoDetails", function(request, response) {
                 jsonData.title = item.snippet.title
                 jsonData.description = finalText
                 jsonData.deletedDescription = deletedDescription
+                jsonData.publishedAt = item.snippet.publishedAt
+                jsonData.categoryId = item.snippet.categoryId
+                jsonData.channelTitle = item.snippet.channelTitle
                 if(item.statistics)
                 {
-                    jsonData.views = item.statistics.viewCount
-                    jsonData.likes = item.statistics.likeCount
-                    jsonData.favoriteCount = item.statistics.favoriteCount
-                }
-                jsonData.views = item.statistics.viewCount
-                jsonData.likes = item.statistics.likeCount
-                jsonData.favoriteCount = item.statistics.favoriteCount
+	                jsonData.views = item.statistics.viewCount
+	                jsonData.likes = item.statistics.likeCount
+	                jsonData.favoriteCount = item.statistics.favoriteCount
+	            }
                 jsonData.duration = finalDuration
                 response.success(jsonData);
             }else{
